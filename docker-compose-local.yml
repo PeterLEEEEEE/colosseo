@@ -15,8 +15,9 @@ services:
       - "80:80"
     volumes:
       - ./nginx/conf.d:/etc/nginx/conf.d
-#    depends_on:
-#      - colosseo-spring
+    depends_on:
+      - colosseo-app
+
   colosseo-db:
     image: 'mysql:latest'
     container_name: colosseo-db
@@ -31,20 +32,20 @@ services:
     ports:
       - '3306:3306'
 
-#  colosseo-spring:
-#    container_name: colosseo-spring
-#    build:
-#      dockerfile: Dockerfile
-#      context: .
-#    image: mhlee1994/colosseo-spring
+  colosseo-app:
+    container_name: colosseo-app
+    build:
+      dockerfile: Dockerfile
+      context: .
+    image: mhlee1994/colosseo-app
 #    volumes:
 #      - /Users/imuhyeon/dev/project-logs/sp/logs:/tmp/logs
-#    ports:
-#      - "8888:8888"
-#    depends_on:
-#      - colosseo-db
-#      - colosseo-redis
-#    restart: always
+    ports:
+      - "8888:8888"
+    depends_on:
+      - colosseo-db
+      - colosseo-redis
+    restart: always
 
   colosseo-redis:
     container_name: colosseo-redis

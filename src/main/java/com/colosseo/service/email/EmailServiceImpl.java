@@ -64,6 +64,7 @@ public class EmailServiceImpl implements EmailService {
         return "Successfully Sent";
     }
 
+
     public String keyGenerator(String email) throws NoSuchAlgorithmException {
         SecureRandom random = SecureRandom.getInstanceStrong();
         int randNumber = random.nextInt(10000);

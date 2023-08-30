@@ -27,7 +27,8 @@ spring:
       matching-strategy: ant_path_matcher
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/colosseo
+#    url: jdbc:mysql://localhost:3306/colosseo
+    url: jdbc:mysql://colosseo-db:3306/colosseo
     username: root
     password: abc123
   devtools:
@@ -45,16 +46,17 @@ spring:
 
   data:
     redis:
-      host: localhost
+#      host: localhost
+      host: colosseo-redis
       port: 6379
 
-  security:
-    oauth2:
-      client:
-        registration:
-          naver:
-            client-id: 3uo_IvrPRNr_lSPyqAIy
-            client-secret: LuzH2WByJH
+#  security:
+#    oauth2:
+#      client:
+#        registration:
+#          naver:
+#            client-id: 3uo_IvrPRNr_lSPyqAIy
+#            client-secret: LuzH2WByJH
 
 
 jwt:

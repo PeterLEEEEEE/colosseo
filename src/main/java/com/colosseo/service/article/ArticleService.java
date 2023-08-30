@@ -13,6 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class ArticleService {
 
     public String postArticle(ArticleDto articleDto) {
-
+        return "test";
     }
 }
