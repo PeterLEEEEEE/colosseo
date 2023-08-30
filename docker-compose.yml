@@ -1,0 +1,56 @@
+version: "3.8"
+
+networks:
+  default:
+    name: colosseo-network-local
+
+services:
+  colosseo-nginx:
+    container_name: colosseo-nginx
+    build:
+      dockerfile: Dockerfile
+      context: ./nginx
+    image: mhlee1994/colosseo-nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+    depends_on:
+      - colosseo-app
+  colosseo-db:
+    image: 'mysql:latest'
+    container_name: mhlee1994/colosseo-db
+    build:
+      dockerfile: Dockerfile
+      context: ./database
+    environment:
+      - MYSQL_DATABASE=colosseo
+      - MYSQL_ROOT_PASSWORD=abc123
+    volumes:
+      - ./database/config:/etc/mysql/conf.d
+    ports:
+      - '3306:3307'
+
+  colosseo-app:
+    container_name: colosseo-app
+    build:
+      dockerfile: Dockerfile
+      context: .
+    image: mhlee1994/colosseo-app
+    volumes:
+      - /Users/imuhyeon/dev/project-logs/sp/logs:/tmp/logs
+    ports:
+      - "80:8888"
+    depends_on:
+      - colosseo-db
+      - colosseo-redis
+    restart: always
+
+  colosseo-redis:
+    container_name: colosseo-redis
+    build:
+      dockerfile: Dockerfile
+      context: ./redis
+    image: mhlee1994/colosseo-redis
+    ports:
+      - '6379:6379'

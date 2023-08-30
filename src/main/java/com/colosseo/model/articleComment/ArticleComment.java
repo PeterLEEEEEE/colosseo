@@ -1,0 +1,73 @@
+package com.colosseo.model.articleComment;
+
+import com.colosseo.model.BaseEntity;
+import com.colosseo.model.article.Article;
+import com.colosseo.model.user.User;
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+@Entity
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(indexes = {
+        @Index(columnList = "createdBy"),
+        @Index(columnList = "createdAt")
+})
+public class ArticleComment extends BaseEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Setter
+    @Column(updatable = false)
+    private Long parentCommentId; // 부모 댓글 식별
+
+    @ToString.Exclude // 자기 자신을 보고 있으면 무한으로 참조하니까 이거 넣어야 함
+    @OrderBy("createdAt ASC")
+    @OneToMany(mappedBy = "parentCommentId", cascade = CascadeType.PERSIST)
+    private List<ArticleComment> childComments = new ArrayList<>();
+
+    @Column(nullable = false, length = 255)
+    private String comment;
+
+    @Setter
+    @ManyToOne(optional = false)
+    private Article article;
+
+    @ManyToOne(optional = false)
+    private User user;
+
+    @Builder
+    public ArticleComment(Long parentCommentId, List<ArticleComment> childComments, String comment, Article article, User user) {
+        this.parentCommentId = parentCommentId;
+        this.childComments = childComments;
+        this.comment = comment;
+        this.article = article;
+        this.user = user;
+    }
+
+    public void updateComment(String comment) {
+        this.comment = comment;
+    }
+
+    public void addChildComment(ArticleComment child) {
+        child.setParentCommentId(this.getId());
+        this.getChildComments().add(child);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ArticleComment that)) return false;
+        return id != null && id.equals(that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+}
