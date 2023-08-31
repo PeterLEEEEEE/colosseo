@@ -6,11 +6,11 @@ networks:
 
 services:
   colosseo-nginx:
+    image: mhlee1994/colosseo-nginx
     container_name: colosseo-nginx
     build:
       dockerfile: Dockerfile
       context: ./nginx
-    image: mhlee1994/colosseo-nginx
     ports:
       - "80:80"
     volumes:
@@ -18,8 +18,8 @@ services:
     depends_on:
       - colosseo-app
   colosseo-db:
-    image: 'mysql:latest'
-    container_name: mhlee1994/colosseo-db
+    image: mhlee1994/colosseo-db
+    container_name: colosseo-db
     build:
       dockerfile: Dockerfile
       context: ./database
@@ -32,11 +32,11 @@ services:
       - '3306:3307'
 
   colosseo-app:
+    image: mhlee1994/colosseo-app
     container_name: colosseo-app
     build:
       dockerfile: Dockerfile
       context: .
-    image: mhlee1994/colosseo-app
     volumes:
       - /Users/imuhyeon/dev/project-logs/sp/logs:/tmp/logs
     ports:
@@ -47,10 +47,10 @@ services:
     restart: always
 
   colosseo-redis:
+    image: mhlee1994/colosseo-redis
     container_name: colosseo-redis
     build:
       dockerfile: Dockerfile
       context: ./redis
-    image: mhlee1994/colosseo-redis
     ports:
       - '6379:6379'
