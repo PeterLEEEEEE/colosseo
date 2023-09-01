@@ -8,12 +8,13 @@ on:
 
 jobs:
   build:
+    name: Build
     runs-on: ubuntu-22.04 # 액션을 실행시키는 Runner의 운영체제
 
     steps: # 액션의 실제 수행 내용, 단계별로 name과 수행동작을 작성
 
     - name: Deploy To Server
-    - uses: appleboy/ssh-action@v1.0.0
+      uses: appleboy/ssh-action@v1.0.0
       with:
         host: ${{ secrets.REMOTE_HOST }} # ip
         username: ${{ secrets.USERNAME }}
