@@ -106,3 +106,8 @@ tasks.named('asciidoctor') {
     inputs.dir snippetsDir
     dependsOn test
 }
+
+// jar 파일 하나만
+jar {
+    enabled = false
+}

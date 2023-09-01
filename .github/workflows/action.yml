@@ -1,4 +1,4 @@
-name: Docker Image CI
+name: Colosseo CI/CD
 
 on:
   push:
@@ -7,12 +7,51 @@ on:
     branches: [ "main" ]
 
 jobs:
-
   build:
+    runs-on: ubuntu-22.04 # 액션을 실행시키는 Runner의 운영체제
 
-    runs-on: ubuntu-latest
+    steps: # 액션의 실제 수행 내용, 단계별로 name과 수행동작을 작성
 
-    steps:
     - uses: actions/checkout@v3
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'correto'
+
+#    - name: Cache Gradle
+#    - uses: actions/cache@v3
+#      with:
+#        path:
+#          ~/.gradle/caches
+#          ~/.gradle/wrapper
+#        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+#        restore-keys: |
+#          ${{ runner.os }}-gradle-
+
+    - name: grant permission for gradlew
+      run: chmod +x ./gradlew
+      shell: bash
+
+#    - name: Build App With Gradle
+#      run: ./gradlew clean build
+#      shell: bash
+
+    - name: Deploy To Server
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.REMOTE_HOST }} # ip
+        username: ${{ secrets.USERNAME }}
+        password: ${{ secrets.PASSWORD }}
+        port: ${{ secrets.PORT }}
+        script: |
+          cd /dev/springman/colosseo
+          git pull origin main
+          ./gradlew clean build
+
+
+    - name: Docker Compose setup
+    - uses: actions/checkout@v3
+      run: sh entrypoint.sh
+      shell: bash
+
