@@ -12,6 +12,6 @@ echo "Removing Images..."
 docker-compose down --rmi all
 
 echo "Setup New Containers..."
-docker-compose -f dokcer-compose.yml up -d
+docker-compose -f docker-compose.yml up -d
 
 echo "Complete!!!"
