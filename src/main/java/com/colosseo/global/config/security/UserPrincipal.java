@@ -1,7 +1,6 @@
 package com.colosseo.global.config.security;
 
 import com.colosseo.dto.user.UserDto;
-import com.colosseo.global.enums.AccountStatusType;
 import com.colosseo.global.enums.RoleType;
 import com.colosseo.model.user.User;
 import lombok.Builder;
@@ -14,7 +13,6 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Getter
 public class UserPrincipal implements UserDetails, OAuth2User {
@@ -32,6 +30,11 @@ public class UserPrincipal implements UserDetails, OAuth2User {
         this.email = email;
         this.nickname = nickname;
         this.authorities = authorities;
+    }
+
+    @Override
+    public String getUsername() {
+        return "Peter";
     }
 
     @Override
@@ -67,7 +70,7 @@ public class UserPrincipal implements UserDetails, OAuth2User {
 
     @Override
     public String getName() {
-        return null;
+        return email;
     }
 
     public static UserPrincipal of(User user) {

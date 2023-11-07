@@ -143,4 +143,8 @@ public class TokenProvider implements InitializingBean {
         Long now = new Date().getTime();
         return (expiration.getTime() - now);
     }
+
+    public String getSub(String token) {
+        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().getSubject();
+    }
 }

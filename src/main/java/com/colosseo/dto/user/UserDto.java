@@ -2,6 +2,8 @@ package com.colosseo.dto.user;
 
 import com.colosseo.global.enums.AccountStatusType;
 import com.colosseo.global.enums.RoleType;
+import com.colosseo.model.user.User;
+import jakarta.validation.constraints.Email;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -33,5 +35,14 @@ public class UserDto {
         this.createdBy = createdBy;
         this.updatedAt = updatedAt;
         this.modifiedBy = modifiedBy;
+    }
+
+    public static UserDto from(User user) {
+        return UserDto.builder()
+                .id(user.getId())
+                .nickname(user.getNickname())
+                .email(user.getEmail())
+//                .createdAt(user.getCreatedAt())
+                .build();
     }
 }

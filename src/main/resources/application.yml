@@ -19,6 +19,8 @@ server:
       force: true
 
 spring:
+  cache:
+    type: redis
 #  config:
 #    activate:
 #      on-profile: local

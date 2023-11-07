@@ -36,6 +36,7 @@ public class ErrorResponse {
                 );
     }
 
+    // @valid 관련 예외처리
     public static ResponseEntity<ErrorResponse> toResponseEntity(BindingResult bindingResult) {
         List<ObjectError> errorList = bindingResult.getAllErrors();
 

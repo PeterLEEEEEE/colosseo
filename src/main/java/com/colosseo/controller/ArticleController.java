@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,18 +24,40 @@ public class ArticleController {
 
     private final ArticleService articleService;
 
-    @Operation(summary = "특정 게시글과 댓글 가져오기", description = "유저 로그인 API")
-    @GetMapping("/{articleId}")
-    public String getPostWithComments(@PathVariable Long articleId) {
-        return "test";
-    }
+//    @Operation(summary = "특정 게시글과 댓글 가져오기", description = "유저 로그인 API")
+//    @GetMapping("/{articleId}")
+//    @Cacheable(key = "#articleId", cacheNames = "article")
+//    public String getPostWithComments(@PathVariable Long articleId) {
+//        articleService.getArticle(articleId);
+//        return "test";
+//    }
 
     @PostMapping("/post")
     public String postArticle(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
             @Valid @RequestBody ArticleRequestDto articleRequestDto) {
-        articleService.postArticle(articleRequestDto.toDto(userPrincipal.toDto()));
-        return "";
+
+        return articleService.postArticle(articleRequestDto.toDto(userPrincipal.toDto()));
     }
 
+    @GetMapping("/{articleId}")
+    public String getArticleDetail(@PathVariable Long articleId) {
+        return "success";
+    }
+
+    @DeleteMapping("/{articleId}")
+    public String deleteArticle(
+            @PathVariable Long articleId,
+            @AuthenticationPrincipal UserPrincipal userPrincipal) {
+
+        return "success";
+    }
+
+    @PutMapping("/{articleId}")
+    public String updateArticle(
+            @PathVariable Long articleId,
+            @AuthenticationPrincipal UserPrincipal userPrincipal) {
+
+        return "success";
+    }
 }

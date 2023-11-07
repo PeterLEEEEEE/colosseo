@@ -1,4 +1,4 @@
-package com.colosseo.global.handler;
+package com.colosseo.exception;
 
 import com.colosseo.exception.ErrorCode;
 import lombok.Getter;

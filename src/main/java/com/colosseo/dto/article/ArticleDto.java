@@ -1,10 +1,14 @@
 package com.colosseo.dto.article;
 
 import com.colosseo.dto.user.UserDto;
+import com.colosseo.model.article.Article;
+import com.colosseo.model.user.User;
 import lombok.Builder;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 
+@Getter
 public class ArticleDto {
     private Long id;
     private UserDto userDto;
@@ -29,5 +33,13 @@ public class ArticleDto {
         this.createdBy = createdBy;
         this.updatedAt = updatedAt;
         this.modifiedBy = modifiedBy;
+    }
+
+    public Article toEntity(User user) {
+        return Article.builder()
+                .title(title)
+                .content(content)
+                .user(user)
+                .build();
     }
 }

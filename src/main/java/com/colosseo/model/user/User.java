@@ -1,6 +1,7 @@
 package com.colosseo.model.user;
 
 import com.colosseo.global.enums.AccountStatusType;
+import com.colosseo.global.enums.ProviderType;
 import com.colosseo.global.enums.RoleType;
 import com.colosseo.model.BaseEntity;
 import jakarta.persistence.*;
@@ -21,6 +22,7 @@ public class User extends BaseEntity {
 
 //    private String username;
 
+    @Column(nullable = false, unique = true)
     private String email;
 
     private String nickname;
@@ -31,6 +33,11 @@ public class User extends BaseEntity {
 
     private Boolean isVerified = false;
 
+    @Setter
+    @Enumerated(EnumType.STRING)
+    @NotNull
+    private ProviderType providerType;
+
     @Enumerated(EnumType.STRING)
     @NotNull
     private RoleType roleType;
@@ -39,14 +46,18 @@ public class User extends BaseEntity {
     @Column(name="account_status")
     private AccountStatusType accountStatusType;
 
+    @OneToOne(mappedBy = "user")
+    private Auth auth;
     @Builder
-    public User(String email, String nickname, String memo, String password, LocalDateTime loginAt, Boolean isVerified, RoleType roleType, AccountStatusType accountStatusType) {
+    public User(String email, String nickname, String memo, String password, LocalDateTime loginAt, Boolean isVerified, ProviderType providerType, RoleType roleType, AccountStatusType accountStatusType, Auth auth) {
         this.email = email;
         this.nickname = nickname;
         this.password = password;
         this.loginAt = loginAt;
         this.isVerified = isVerified;
+        this.providerType = providerType;
         this.roleType = roleType;
         this.accountStatusType = accountStatusType;
+        this.auth = auth;
     }
 }

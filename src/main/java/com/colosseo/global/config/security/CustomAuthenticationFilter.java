@@ -24,6 +24,7 @@ import java.io.IOException;
 public class CustomAuthenticationFilter extends OncePerRequestFilter {
     private final TokenProvider tokenProvider;
     private final RedisDao redisDao;
+
     private String header = "Authorization";
     @Override
     protected void doFilterInternal(
@@ -47,7 +48,7 @@ public class CustomAuthenticationFilter extends OncePerRequestFilter {
                     // db I/O
                     Authentication authentication = tokenProvider.getAuthentication(token);
                     SecurityContextHolder.getContext().setAuthentication(authentication);
-                    log.info("Security Context 에 '{}' 인증 정보를 저장했습니다, uri: {}", authentication.getName(), requestURI);
+                    log.info("Security Context 에 '{}' 인증 정보를 저장했습니다, uri: {}", tokenProvider.getSub(token), requestURI);
                 } else {
                     log.info("uri: {}", requestURI);
                 }

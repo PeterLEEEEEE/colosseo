@@ -8,9 +8,8 @@ import com.colosseo.exception.ErrorCode;
 import com.colosseo.global.config.redis.RedisDao;
 import com.colosseo.global.config.security.CustomAuthenticationProvider;
 import com.colosseo.global.config.security.jwt.TokenProvider;
-import com.colosseo.global.handler.CustomException;
+import com.colosseo.exception.CustomException;
 import com.colosseo.repository.UserRepository;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,7 +18,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.concurrent.TimeUnit;
 

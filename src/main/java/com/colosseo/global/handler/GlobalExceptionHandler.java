@@ -1,5 +1,7 @@
 package com.colosseo.global.handler;
 
+import com.colosseo.exception.CustomException;
+import com.colosseo.exception.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -22,9 +24,17 @@ public class GlobalExceptionHandler {
         return ErrorResponse.toResponseEntity(e.getErrorCode());
     }
 
+    @ExceptionHandler(value = {EntityNotFoundException.class})
+    protected ResponseEntity<ErrorResponse> handleEntityException(EntityNotFoundException e) {
+        log.error("handleEntityException throw EntityException : {}", e.getErrorCode());
+        return ErrorResponse.toResponseEntity(e.getErrorCode());
+    }
+
     @ExceptionHandler(NoHandlerFoundException.class)
     public ResponseEntity<String> handle404NotFound(NoHandlerFoundException e) {
         log.error("404 not found: {}", e.getMessage());
         return ErrorResponse.toResponseEntity(e);
     }
+
+
 }

@@ -3,7 +3,8 @@ package com.colosseo.service.email;
 import com.colosseo.dto.email.CodeRequestDto;
 import com.colosseo.exception.ErrorCode;
 import com.colosseo.global.config.redis.RedisDao;
-import com.colosseo.global.handler.CustomException;
+import com.colosseo.exception.CustomException;
+import com.colosseo.repository.UserRepository;
 import jakarta.mail.Message;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
@@ -19,7 +20,7 @@ import java.time.Duration;
 @Service
 @RequiredArgsConstructor
 public class EmailServiceImpl implements EmailService {
-
+    private final UserRepository userRepository;
     private final JavaMailSender emailSender;
     private final RedisDao redisDao;
 
@@ -76,7 +77,7 @@ public class EmailServiceImpl implements EmailService {
 
     public Boolean verifyCode(CodeRequestDto codeRequestDto) {
         String grantedCode = redisDao.getValues(codeRequestDto.getEmail());
-        if (grantedCode.isEmpty()) {
+        if (grantedCode == null || grantedCode.isEmpty()) {
             throw new CustomException(ErrorCode.VERIFICATION_CODE_EXPIRED);
         }
         if (!codeRequestDto.getCode().equals(grantedCode)) {

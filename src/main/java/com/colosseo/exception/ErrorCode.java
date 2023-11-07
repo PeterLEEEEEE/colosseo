@@ -12,15 +12,19 @@ public enum ErrorCode {
     USER_ALREADY_EXIST(HttpStatus.BAD_REQUEST.value(), "USER-0004", "이미 존재하는 아이디 입니다."),
     PASSWORD_NOT_SAME(HttpStatus.BAD_REQUEST.value(), "USER-0004", "비밀번호가 일치하지 않습니다. 다시 한번 확인해주세요"),
 
-    VERIFICATION_CODE_NOT_SAME(HttpStatus.UNAUTHORIZED.value(), "EMAIL-0001", "인증 코드가 일치하지 않습니다."),
-    VERIFICATION_CODE_EXPIRED(HttpStatus.UNAUTHORIZED.value(), "EMAIL-0002", "만료된 인증 코드입니다."),
+    VERIFICATION_CODE_NOT_SAME(HttpStatus.BAD_REQUEST.value(), "EMAIL-0001", "인증 코드가 일치하지 않습니다."),
+    VERIFICATION_CODE_EXPIRED(HttpStatus.BAD_REQUEST.value(), "EMAIL-0002", "만료된 인증 코드입니다."),
     REFRESH_TOKEN_NOT_FOUND(HttpStatus.UNAUTHORIZED.value(), "TOKEN-0001", "보관된 리프레시 토큰이 존재하지 않습니다"),
     JWT_ACCESS_TOKEN_NOT_FOUND(HttpStatus.UNAUTHORIZED.value(), "TOKEN-0002", "토큰이 존재하지 않습니다."),
     JWT_WRONG_SIGNATURE(HttpStatus.UNAUTHORIZED.value(), "TOKEN-0003", "유효한 시그니처가 아닙니다."),
     JWT_UNSUPPORTED_TOKEN(HttpStatus.UNAUTHORIZED.value(), "TOKEN-0004", "지원하지 않는 토큰입니다."),
     JWT_EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED.value(), "TOKEN-0005", "만료된 토큰입니다."),
     JWT_INVALID_TOKEN(HttpStatus.UNAUTHORIZED.value(), "TOKEN-0006", "잘못된 형식의 토큰입니다."),
-    JWT_COMMON_ERROR(HttpStatus.UNAUTHORIZED.value(), "TOKEN-0007", "잘못된 토큰입니다.");
+    JWT_COMMON_ERROR(HttpStatus.UNAUTHORIZED.value(), "TOKEN-0007", "잘못된 토큰입니다."),
+
+    COOKIE_DESERIALIZATION_ERROR(HttpStatus.BAD_REQUEST.value(), "COOKIE-0001", "잘못된 쿠키 형식입니다."),
+
+    PROVIDER_ALREADY_EXIST(HttpStatus.BAD_REQUEST.value(), "OAUTH-0001", "이미 가입된 소셜 로그인 계정이 있습니다.");
     private final String code;
     private final String message;
     private final int status;

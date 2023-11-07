@@ -67,7 +67,7 @@ public class QArticleComment extends EntityPathBase<ArticleComment> {
     public QArticleComment(Class<? extends ArticleComment> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.article = inits.isInitialized("article") ? new com.colosseo.model.article.QArticle(forProperty("article"), inits.get("article")) : null;
-        this.user = inits.isInitialized("user") ? new com.colosseo.model.user.QUser(forProperty("user")) : null;
+        this.user = inits.isInitialized("user") ? new com.colosseo.model.user.QUser(forProperty("user"), inits.get("user")) : null;
     }
 
 }

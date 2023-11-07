@@ -4,10 +4,7 @@ import com.colosseo.model.BaseEntity;
 import com.colosseo.model.articleComment.ArticleComment;
 import com.colosseo.model.user.User;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,4 +36,14 @@ public class Article extends BaseEntity {
     @ToString.Exclude
     @ManyToOne(optional = false)
     private User user;
+
+    @Builder
+    public Article(Long id, String title, String content, Long likeCount, List<ArticleComment> articleCommentList, User user) {
+        this.id = id;
+        this.title = title;
+        this.content = content;
+        this.likeCount = likeCount;
+        this.articleCommentList = articleCommentList;
+        this.user = user;
+    }
 }
