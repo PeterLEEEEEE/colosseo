@@ -14,8 +14,9 @@ import java.util.Objects;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(indexes = {
-        @Index(columnList = "createdBy"),
-        @Index(columnList = "createdAt")
+        @Index(name = "IDX_ARTICLE_COMMENT_CREATED_BY", columnList = "createdBy"),
+        @Index(name = "IDX_ARTICLE_COMMENT_CREATED_AT", columnList = "createdAt"),
+        @Index(name = "IDX_ARTICLE_COMMENT_ARTICLE_ID", columnList = "article_id")
 })
 public class ArticleComment extends BaseEntity {
     @Id
@@ -35,10 +36,12 @@ public class ArticleComment extends BaseEntity {
     private String comment;
 
     @Setter
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn
     private Article article;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn
     private User user;
 
     @Builder

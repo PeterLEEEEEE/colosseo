@@ -1,0 +1,7 @@
+### 아티클 삭제
+
+DELETE http://localhost:8888/api/v1/article/1
+    -H accept: */*
+    -H Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRoIjoiUk9MRV9VU0VSIiwic3ViIjoiYWRtaW5AZ21haWwuY29tIiwiaWF0IjoxNjk5NTEzMzUyLCJleHAiOjE2OTk1OTk3NTJ9.ZTfwLNjdZpBOpOHbLIwmKZCcZqUxEUyYzZqnqY5ZGIa2i62nybO6GiR8m8224lhWftQvdnnA8WBuH-FITfdkhg
+
+#Content-Type: application/json

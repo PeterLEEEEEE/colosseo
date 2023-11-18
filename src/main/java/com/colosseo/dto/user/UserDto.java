@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 
 @Getter
 public class UserDto {
-    private Long id;
+    private Long userId;
     private String email;
     private String nickname;
     private AccountStatusType accountStatusType;
@@ -24,8 +24,8 @@ public class UserDto {
 
 
     @Builder
-    public UserDto(Long id, String email, String nickname, AccountStatusType accountStatusType, String password, LocalDateTime createdAt, RoleType roleType, String createdBy, LocalDateTime updatedAt, String modifiedBy) {
-        this.id = id;
+    public UserDto(Long userId, String email, String nickname, AccountStatusType accountStatusType, String password, LocalDateTime createdAt, RoleType roleType, String createdBy, LocalDateTime updatedAt, String modifiedBy) {
+        this.userId = userId;
         this.email = email;
         this.nickname = nickname;
         this.accountStatusType = accountStatusType;
@@ -39,10 +39,19 @@ public class UserDto {
 
     public static UserDto from(User user) {
         return UserDto.builder()
-                .id(user.getId())
+                .userId(user.getId())
                 .nickname(user.getNickname())
                 .email(user.getEmail())
 //                .createdAt(user.getCreatedAt())
+                .build();
+    }
+
+    public User toEntity() {
+        return User.builder()
+                .id(userId)
+                .email(email)
+                .password(password)
+                .roleType(roleType)
                 .build();
     }
 }

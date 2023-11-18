@@ -35,11 +35,19 @@ public class ArticleDto {
         this.modifiedBy = modifiedBy;
     }
 
-    public Article toEntity(User user) {
+    public Article toEntity() {
         return Article.builder()
                 .title(title)
                 .content(content)
-                .user(user)
+                .user(userDto.toEntity())
+                .build();
+    }
+
+    public static ArticleDto from(Article article) {
+        return ArticleDto.builder()
+                .title(article.getTitle())
+                .content(article.getContent())
+                .nickname(article.getUser().getNickname())
                 .build();
     }
 }

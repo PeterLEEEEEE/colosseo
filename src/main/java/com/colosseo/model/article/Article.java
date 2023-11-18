@@ -1,5 +1,6 @@
 package com.colosseo.model.article;
 
+import com.colosseo.dto.article.ArticleDto;
 import com.colosseo.model.BaseEntity;
 import com.colosseo.model.articleComment.ArticleComment;
 import com.colosseo.model.user.User;
@@ -28,6 +29,7 @@ public class Article extends BaseEntity {
     private String content;
 
     private Long likeCount;
+
     @ToString.Exclude // 순환 참조 방지
     @OrderBy("id ASC, createdAt DESC")
     @OneToMany(mappedBy="article", cascade = CascadeType.ALL)
@@ -45,5 +47,21 @@ public class Article extends BaseEntity {
         this.likeCount = likeCount;
         this.articleCommentList = articleCommentList;
         this.user = user;
+    }
+
+    public Long getUserId() {
+        return this.user.getId();
+    }
+
+    public ArticleDto toDto() {
+        return ArticleDto.builder()
+                .title(title)
+                .content(content)
+                .build();
+    }
+
+    public void addComment(ArticleComment articleComment) {
+        articleComment.setArticle(this);
+        this.articleCommentList.add(articleComment);
     }
 }

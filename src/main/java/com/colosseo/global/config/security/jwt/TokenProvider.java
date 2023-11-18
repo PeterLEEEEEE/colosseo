@@ -32,12 +32,9 @@ public class TokenProvider implements InitializingBean {
     private final RedisDao redisDao;
     private Key key;
 
-//    @Value("${jwt.security.header}")
-    private String header;
-
     @Value("${jwt.security.key}")
     private String secretKey;
-    private static final String tokenPrefix = "Bearer ";
+    private static final String TOKEN_PREFIX = "Bearer ";
     private static final long accessTokenExpireTime = Duration.ofDays(1).toMillis();
     private static final long refreshTokenExpireTime = Duration.ofDays(14).toMillis();
 
@@ -48,8 +45,8 @@ public class TokenProvider implements InitializingBean {
     }
 
     public String resolveToken(String token) {
-        if (StringUtils.hasText(token) && token.startsWith(tokenPrefix)) {
-            return token.substring(7);
+        if (StringUtils.hasText(token) && token.startsWith(TOKEN_PREFIX)) {
+            return token.split(" ")[1].trim();
         }
         return null;
     }
@@ -82,12 +79,12 @@ public class TokenProvider implements InitializingBean {
 
     public String createAccessToken(String username) {
         String accessToken = generateToken(username, accessTokenExpireTime);
-        return tokenPrefix + accessToken;
+        return TOKEN_PREFIX + accessToken;
     }
 
     public String createAccessToken(Authentication authentication) {
         String accessToken = generateToken(authentication, accessTokenExpireTime);
-        return tokenPrefix + accessToken;
+        return TOKEN_PREFIX + accessToken;
     }
 
     public String createRefreshToken(String username) {
@@ -95,7 +92,7 @@ public class TokenProvider implements InitializingBean {
         log.info("refresh token: {}", refreshToken);
         redisDao.setValues(username, refreshToken, Duration.ofDays(14));
 
-        return tokenPrefix + refreshToken;
+        return TOKEN_PREFIX + refreshToken;
     }
 
     public String validateToken(String token) {

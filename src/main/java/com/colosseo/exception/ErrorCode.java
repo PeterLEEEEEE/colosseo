@@ -5,13 +5,15 @@ import org.springframework.http.HttpStatus;
 
 public enum ErrorCode {
     UNKNOWN_ERROR(HttpStatus.BAD_REQUEST.value(), "COMMON-0001", "알 수 없는 에러가 발생했습니다."),
-    NO_PERMISSION(HttpStatus.UNAUTHORIZED.value(), "COMMON-0002", "접근 권한이 없습니다."),
+    NO_PERMISSION(HttpStatus.FORBIDDEN.value(), "COMMON-0002", "접근 권한이 없습니다."),
     USER_NOT_EXIST(HttpStatus.BAD_REQUEST.value(), "USER-0001", "존재하지 않는 사용자입니다."),
     USER_NOT_EXIST_OR_WRONG_PASSWORD(HttpStatus.UNAUTHORIZED.value(), "USER-0002", "존재하지 않는 사용자이거나 잘못된 비밀번호 입니다."),
     USER_NOT_ENABLED(HttpStatus.BAD_REQUEST.value(), "USER-0003", "잠금 상태의 계정입니다."),
     USER_ALREADY_EXIST(HttpStatus.BAD_REQUEST.value(), "USER-0004", "이미 존재하는 아이디 입니다."),
     PASSWORD_NOT_SAME(HttpStatus.BAD_REQUEST.value(), "USER-0004", "비밀번호가 일치하지 않습니다. 다시 한번 확인해주세요"),
 
+    ARTICLE_NOT_EXISTS(HttpStatus.BAD_REQUEST.value(), "ARTICLE-0001", "존재하지 않는 글입니다."),
+    COMMENT_NOT_EXISTS(HttpStatus.BAD_REQUEST.value(), "COMMENT-0001", "존재하지 않는 댓글입니다."),
     VERIFICATION_CODE_NOT_SAME(HttpStatus.BAD_REQUEST.value(), "EMAIL-0001", "인증 코드가 일치하지 않습니다."),
     VERIFICATION_CODE_EXPIRED(HttpStatus.BAD_REQUEST.value(), "EMAIL-0002", "만료된 인증 코드입니다."),
     REFRESH_TOKEN_NOT_FOUND(HttpStatus.UNAUTHORIZED.value(), "TOKEN-0001", "보관된 리프레시 토큰이 존재하지 않습니다"),

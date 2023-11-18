@@ -1,5 +1,6 @@
 package com.colosseo.model.user;
 
+import com.colosseo.dto.user.UserDto;
 import com.colosseo.global.enums.AccountStatusType;
 import com.colosseo.global.enums.ProviderType;
 import com.colosseo.global.enums.RoleType;
@@ -48,8 +49,10 @@ public class User extends BaseEntity {
 
     @OneToOne(mappedBy = "user")
     private Auth auth;
+
     @Builder
-    public User(String email, String nickname, String memo, String password, LocalDateTime loginAt, Boolean isVerified, ProviderType providerType, RoleType roleType, AccountStatusType accountStatusType, Auth auth) {
+    public User(Long id, String email, String nickname, String memo, String password, LocalDateTime loginAt, Boolean isVerified, ProviderType providerType, RoleType roleType, AccountStatusType accountStatusType, Auth auth) {
+        this.id = id;
         this.email = email;
         this.nickname = nickname;
         this.password = password;
@@ -59,5 +62,14 @@ public class User extends BaseEntity {
         this.roleType = roleType;
         this.accountStatusType = accountStatusType;
         this.auth = auth;
+    }
+
+    public UserDto toDto() {
+        return UserDto.builder()
+                .userId(id)
+                .email(email)
+                .password(password)
+                .roleType(roleType)
+                .build();
     }
 }

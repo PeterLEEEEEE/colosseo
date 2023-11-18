@@ -16,6 +16,7 @@ import java.util.Map;
 
 @Getter
 public class UserPrincipal implements UserDetails, OAuth2User {
+    private final Long userId;
     private String username;
     private String password;
     private String email;
@@ -24,7 +25,8 @@ public class UserPrincipal implements UserDetails, OAuth2User {
     private Collection<? extends GrantedAuthority> authorities;
 
     @Builder
-    public UserPrincipal(String username, String password, String email, String nickname, Collection<? extends GrantedAuthority> authorities) {
+    public UserPrincipal(Long userId, String username, String password, String email, String nickname, Collection<? extends GrantedAuthority> authorities) {
+        this.userId = userId;
         this.username = username;
         this.password = password;
         this.email = email;
@@ -77,6 +79,7 @@ public class UserPrincipal implements UserDetails, OAuth2User {
         List<RoleType> roleTypes = List.of(user.getRoleType());
         return UserPrincipal.builder()
 //                .username(user.getUsername())
+                .userId(user.getId())
                 .email(user.getEmail())
                 .password(user.getPassword())
                 .nickname(user.getNickname())
@@ -89,6 +92,7 @@ public class UserPrincipal implements UserDetails, OAuth2User {
 
     public UserDto toDto() {
         return UserDto.builder()
+                .userId(userId)
                 .email(email)
                 .nickname(nickname)
                 .build();

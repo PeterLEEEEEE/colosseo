@@ -2,6 +2,7 @@ package com.colosseo.global.config.security;
 
 import com.colosseo.global.config.redis.RedisDao;
 import com.colosseo.global.config.security.jwt.TokenProvider;
+import com.colosseo.global.utils.UrlUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,6 +17,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 
 //@Component
@@ -34,28 +36,46 @@ public class CustomAuthenticationFilter extends OncePerRequestFilter {
 
         // 헤더에서 토큰을 가져옴
         String requestHeader = request.getHeader(header);
+        String requestURI = request.getRequestURI();
+
+//        String[] permittedUrls = UrlUtils.permittedUrl;
+//
+//        boolean isPermitted = Arrays.asList(permittedUrls)
+//                .contains(requestURI);
+
         String token = tokenProvider.resolveToken(requestHeader);
         String jwtException = tokenProvider.validateToken(token);
-        String requestURI = request.getRequestURI();
+
         log.info(requestURI);
 
-        if (StringUtils.hasText(token)) {
-
+        if (token != null && jwtException.equals("valid")) {
             String isLoggedOut = redisDao.getValues(token);
 
             if (ObjectUtils.isEmpty(isLoggedOut)) {
-                if (jwtException.equals("valid")) {
-                    // db I/O
-                    Authentication authentication = tokenProvider.getAuthentication(token);
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
-                    log.info("Security Context 에 '{}' 인증 정보를 저장했습니다, uri: {}", tokenProvider.getSub(token), requestURI);
-                } else {
-                    log.info("uri: {}", requestURI);
-                }
+                Authentication authentication = tokenProvider.getAuthentication(token);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+                log.info("Security Context 에 '{}' 인증 정보를 저장했습니다, uri: {}", tokenProvider.getSub(token), requestURI);
             } else {
                 log.info("유효하지 않은 토큰입니다. token blacklist");
             }
         }
+//        if (StringUtils.hasText(token)) {
+//
+//            String isLoggedOut = redisDao.getValues(token);
+//
+//            if (ObjectUtils.isEmpty(isLoggedOut)) {
+//                if (jwtException.equals("valid")) {
+//                    // db I/O
+//                    Authentication authentication = tokenProvider.getAuthentication(token);
+//                    SecurityContextHolder.getContext().setAuthentication(authentication);
+//                    log.info("Security Context 에 '{}' 인증 정보를 저장했습니다, uri: {}", tokenProvider.getSub(token), requestURI);
+//                } else {
+//                    log.info("uri: {}", requestURI);
+//                }
+//            } else {
+//                log.info("유효하지 않은 토큰입니다. token blacklist");
+//            }
+//        }
 
         request.setAttribute("jwt_exception", jwtException);
 

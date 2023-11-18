@@ -1,11 +1,13 @@
 package com.colosseo.dto.article;
 
+import com.colosseo.dto.articleComment.ArticleCommentDto;
 import com.colosseo.dto.user.UserDto;
 import com.colosseo.model.article.Article;
 import lombok.Builder;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Builder
@@ -16,6 +18,7 @@ public class ArticleWithCommentsDto {
     private String content;
     private LocalDateTime createdAt;
     private String createdBy;
+    private List<ArticleCommentDto> articleCommentDtoList;
 
 //    public static ArticleWithCommentsDto from(Article article) {
 //        return new ArticleWithCommentsDto(

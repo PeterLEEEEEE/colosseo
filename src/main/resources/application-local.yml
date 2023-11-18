@@ -29,7 +29,7 @@ spring:
       matching-strategy: ant_path_matcher
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/colosseo
+    url: jdbc:mysql://localhost:3306/colosseo?useSSL=false
     username: root
     password: abc123
   devtools:
@@ -38,7 +38,7 @@ spring:
   jpa:
     properties:
       hibernate:
-        ddl-auto: update
+        ddl-auto: validate
         show_sql: true
         format_sql: true
         default_batch_fetch_size: 100 # n+1 문제 해결 방법 중 하나

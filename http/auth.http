@@ -8,6 +8,6 @@ Content-Type: application/json
   "password": "abc123"
 }
 
-###
+### 내 정보 가져오기
 GET http://localhost:8888/api/v1/user/me
 
