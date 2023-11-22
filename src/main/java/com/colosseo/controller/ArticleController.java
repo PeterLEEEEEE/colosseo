@@ -2,9 +2,11 @@ package com.colosseo.controller;
 
 import com.colosseo.dto.article.ArticleDto;
 import com.colosseo.dto.article.ArticleRequest;
+import com.colosseo.dto.article.ArticleResponse;
 import com.colosseo.global.config.security.UserPrincipal;
 import com.colosseo.global.enums.SearchType;
-import com.colosseo.model.user.User;
+
+import com.colosseo.model.article.Article;
 import com.colosseo.service.article.ArticleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -15,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -40,6 +43,7 @@ public class ArticleController {
 //    }
 
     @PostMapping("/articles")
+    @Operation(summary = "아티클 등록", description = "아티클 등록하는 API")
     public String postArticle(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
             @Valid @RequestBody ArticleRequest articleRequest) {
@@ -48,9 +52,9 @@ public class ArticleController {
     }
 
     @GetMapping("/articles/{articleId}")
-    public ResponseEntity<String> getArticleDetailWithComments(@PathVariable Long articleId) {
-        articleService.getArticleDetailWithComments(articleId);
-        return ResponseEntity.ok().body("temp");
+    public ResponseEntity<ArticleDto> getArticleDetailWithComments(@PathVariable Long articleId) {
+        ArticleDto articleDto = articleService.getArticleDetailWithComments(articleId);
+        return ResponseEntity.ok().body(articleDto);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') || hasPermission(#articleId, 'ARTICLE', 'DELETE')")
@@ -73,7 +77,7 @@ public class ArticleController {
 
     @GetMapping("/articles")
     @Operation(summary = "페이지 별 아티클 가져오기", description = "아티클 페이지 가져오는 API, 검색: 작성자, 글 내용")
-    public Page<ArticleDto> getArticles(
+    public Page<ArticleResponse> getArticles(
             @RequestParam(required = false) SearchType searchType,
             @RequestParam(required = false) String searchValue,
             @PageableDefault(size = 10,  sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable

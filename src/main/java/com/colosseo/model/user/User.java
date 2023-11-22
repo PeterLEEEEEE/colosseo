@@ -51,7 +51,7 @@ public class User extends BaseEntity {
     private Auth auth;
 
     @Builder
-    public User(Long id, String email, String nickname, String memo, String password, LocalDateTime loginAt, Boolean isVerified, ProviderType providerType, RoleType roleType, AccountStatusType accountStatusType, Auth auth) {
+    public User(Long id, String email, String nickname, String password, LocalDateTime loginAt, Boolean isVerified, ProviderType providerType, RoleType roleType, AccountStatusType accountStatusType, Auth auth) {
         this.id = id;
         this.email = email;
         this.nickname = nickname;
@@ -68,7 +68,8 @@ public class User extends BaseEntity {
         return UserDto.builder()
                 .userId(id)
                 .email(email)
-                .password(password)
+                .nickname(nickname)
+//                .password(password)
                 .roleType(roleType)
                 .build();
     }

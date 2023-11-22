@@ -1,6 +1,7 @@
 package com.colosseo.service.article;
 
 import com.colosseo.dto.article.ArticleDto;
+import com.colosseo.dto.article.ArticleResponse;
 import com.colosseo.exception.CustomException;
 import com.colosseo.exception.ErrorCode;
 import com.colosseo.model.article.Article;
@@ -13,6 +14,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import static io.micrometer.common.util.StringUtils.isBlank;
 
 @Service
 @Transactional
@@ -35,12 +38,12 @@ public class ArticleService {
 //    }
 
     @Transactional(readOnly = true)
-    public String getArticleDetailWithComments(Long articleId) {
+    public ArticleDto getArticleDetailWithComments(Long articleId) {
         Article article = articleRepository.findById(articleId).orElseThrow(
                 () -> new CustomException(ErrorCode.ARTICLE_NOT_EXISTS)
         );
-        article.getArticleCommentList();
-        return "dd";
+        return article.toDto();
+//        return "dd";
     }
 
     public String deleteArticle(Long userId, Long articleId) {
@@ -54,17 +57,12 @@ public class ArticleService {
 
     // Spring data JPA로 페이징
     @Transactional(readOnly = true)
-    public Page<ArticleDto> getArticles(Pageable pageable, SearchType searchType, String searchKeyword) {
-        if (searchType == null && searchKeyword.isBlank()) {
+    public Page<ArticleResponse> getArticles(Pageable pageable, SearchType searchType, String searchKeyword) {
+        if (searchType == null || isBlank(searchKeyword)) {
             return articleRepository.findAll(pageable)
-                    .map(ArticleDto::from);
+                    .map(ArticleResponse::from);
         }
-//        return articleRepository.findAll(pageable)
-//                .map(ArticleDto::from);
-        return switch (searchType) {
-            case TITLE -> articleDslRepository.findArticleByCondition(searchKeyword);
-            case CONTENT -> null;
-            case NICKNAME -> null;
-        }
+
+        return articleDslRepository.findArticleByCondition(searchType, searchKeyword, pageable);
     }
 }

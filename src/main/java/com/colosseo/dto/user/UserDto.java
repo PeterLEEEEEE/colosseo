@@ -3,6 +3,7 @@ package com.colosseo.dto.user;
 import com.colosseo.global.enums.AccountStatusType;
 import com.colosseo.global.enums.RoleType;
 import com.colosseo.model.user.User;
+import com.querydsl.core.annotations.QueryProjection;
 import jakarta.validation.constraints.Email;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,7 +16,6 @@ public class UserDto {
     private String email;
     private String nickname;
     private AccountStatusType accountStatusType;
-    private String password;
     private LocalDateTime createdAt;
     private RoleType roleType;
     private String createdBy;
@@ -24,12 +24,12 @@ public class UserDto {
 
 
     @Builder
-    public UserDto(Long userId, String email, String nickname, AccountStatusType accountStatusType, String password, LocalDateTime createdAt, RoleType roleType, String createdBy, LocalDateTime updatedAt, String modifiedBy) {
+    @QueryProjection
+    public UserDto(Long userId, String email, String nickname, AccountStatusType accountStatusType, LocalDateTime createdAt, RoleType roleType, String createdBy, LocalDateTime updatedAt, String modifiedBy) {
         this.userId = userId;
         this.email = email;
         this.nickname = nickname;
         this.accountStatusType = accountStatusType;
-        this.password = password;
         this.createdAt = createdAt;
         this.roleType = roleType;
         this.createdBy = createdBy;
@@ -50,7 +50,6 @@ public class UserDto {
         return User.builder()
                 .id(userId)
                 .email(email)
-                .password(password)
                 .roleType(roleType)
                 .build();
     }

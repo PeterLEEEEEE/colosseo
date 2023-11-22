@@ -25,10 +25,13 @@ public class Article extends BaseEntity {
 
     @Column(nullable = false, length = 256)
     private String title;
+
     @Column(nullable = false, length = 2047)
     private String content;
 
     private Long likeCount;
+
+//    private String author;
 
     @ToString.Exclude // 순환 참조 방지
     @OrderBy("id ASC, createdAt DESC")
@@ -44,6 +47,7 @@ public class Article extends BaseEntity {
         this.id = id;
         this.title = title;
         this.content = content;
+//        this.author = author;
         this.likeCount = likeCount;
         this.articleCommentList = articleCommentList;
         this.user = user;
@@ -55,8 +59,13 @@ public class Article extends BaseEntity {
 
     public ArticleDto toDto() {
         return ArticleDto.builder()
+                .articleId(id)
+                .likes(likeCount)
+                .userDto(getUser().toDto())
                 .title(title)
                 .content(content)
+                .createdAt(getCreatedAt())
+                .modifiedBy(String.valueOf(getUpdatedAt()))
                 .build();
     }
 
