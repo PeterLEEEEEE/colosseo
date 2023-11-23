@@ -59,38 +59,41 @@ public class ArticleController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN') || hasPermission(#articleId, 'ARTICLE', 'DELETE')")
     @DeleteMapping("/articles/{articleId}")
-    public String deleteArticle(
+    public ResponseEntity<String> deleteArticle(
             @PathVariable Long articleId,
             @AuthenticationPrincipal UserPrincipal userPrincipal) {
-        articleService.deleteArticle(userPrincipal.getUserId(), articleId);
-        return "success";
+
+        String result = articleService.deleteArticle(userPrincipal.getUserId(), articleId);
+        return ResponseEntity.ok().body(result);
     }
 
 //    @PreAuthorize("hasPermission(#articleId, 'Article', 'UPDATE')")
     @PutMapping("/articles/{articleId}")
     public String updateArticle(
             @PathVariable Long articleId,
+            @Valid @RequestBody ArticleRequest articleRequest,
             @AuthenticationPrincipal UserPrincipal userPrincipal) {
-
+        articleService.updateArticle(articleRequest, articleId, userPrincipal.toDto());
         return "success";
     }
 
     @GetMapping("/articles")
-    @Operation(summary = "페이지 별 아티클 가져오기", description = "아티클 페이지 가져오는 API, 검색: 작성자, 글 내용")
-    public Page<ArticleResponse> getArticles(
+    @Operation(summary = "페이지 별 아티클 가져오기", description = "아티클 페이지 가져오는 API, 검색: 작성자, 글 내용 한 페이지 당 10개의 아티클")
+    public ResponseEntity<Page<ArticleResponse>> getArticles(
             @RequestParam(required = false) SearchType searchType,
             @RequestParam(required = false) String searchValue,
             @PageableDefault(size = 10,  sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
             ) {
-        return articleService.getArticles(pageable, searchType, searchValue);
+        return ResponseEntity.ok().body(articleService.getArticles(pageable, searchType, searchValue));
     }
 
     @PostMapping("/articles/{articleId}/likes")
     @Operation(summary = "아티클 좋아요 기능", description = "아티클 좋아요 API")
-    public void likeArticle(
+    public ResponseEntity<String> likeArticle(
             @PathVariable Long articleId,
             @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
-
+        articleService.like(articleId, userPrincipal.getUserId());
+        return ResponseEntity.created(null).body("success");
     }
 }
