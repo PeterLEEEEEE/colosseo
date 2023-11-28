@@ -15,6 +15,7 @@ public enum ErrorCode {
     ARTICLE_NOT_EXISTS(HttpStatus.BAD_REQUEST.value(), "ARTICLE-0001", "존재하지 않는 글입니다."),
     COMMENT_NOT_EXISTS(HttpStatus.BAD_REQUEST.value(), "COMMENT-0001", "존재하지 않는 댓글입니다."),
     COMMENT_LIKE_DUPLICATE(HttpStatus.CONFLICT.value(), "LIKE-0001", "이미 좋아요를 누른 게시글입니다."),
+    COMMENT_LIKE_NOT_EXIST(HttpStatus.BAD_REQUEST.value(), "LIKE-0002", "없는 좋아요 입니다"),
     VERIFICATION_CODE_NOT_SAME(HttpStatus.BAD_REQUEST.value(), "EMAIL-0001", "인증 코드가 일치하지 않습니다."),
     VERIFICATION_CODE_EXPIRED(HttpStatus.BAD_REQUEST.value(), "EMAIL-0002", "만료된 인증 코드입니다."),
     REFRESH_TOKEN_NOT_FOUND(HttpStatus.UNAUTHORIZED.value(), "TOKEN-0001", "보관된 리프레시 토큰이 존재하지 않습니다"),

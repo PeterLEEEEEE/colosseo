@@ -29,6 +29,12 @@ public class Article extends BaseEntity {
     @Column(nullable = false, length = 2047)
     private String content;
 
+
+    @Column(columnDefinition = "int default 0")
+    private Long viewCount;
+
+
+    @Column(columnDefinition = "int default 0")
     private Long likeCount;
 
 //    private String author;
@@ -43,11 +49,12 @@ public class Article extends BaseEntity {
     private User user;
 
     @Builder
-    public Article(Long id, String title, String content, Long likeCount, List<ArticleComment> articleCommentList, User user) {
+    public Article(Long id, String title, String content, Long viewCount, Long likeCount, List<ArticleComment> articleCommentList, User user) {
         this.id = id;
         this.title = title;
         this.content = content;
 //        this.author = author;
+        this.viewCount = viewCount;
         this.likeCount = likeCount;
         this.articleCommentList = articleCommentList;
         this.user = user;
@@ -60,6 +67,7 @@ public class Article extends BaseEntity {
     public ArticleDto toDto() {
         return ArticleDto.builder()
                 .articleId(id)
+                .views(viewCount)
                 .likes(likeCount)
                 .userDto(getUser().toDto())
                 .title(title)
@@ -72,5 +80,13 @@ public class Article extends BaseEntity {
     public void addComment(ArticleComment articleComment) {
         articleComment.setArticle(this);
         this.articleCommentList.add(articleComment);
+    }
+
+    public void increaseViewCount() {
+        this.viewCount += 1;
+    }
+
+    public void increaseLikeCount() {
+        this.likeCount += 1;
     }
 }

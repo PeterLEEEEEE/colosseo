@@ -48,6 +48,8 @@ public class QArticle extends EntityPathBase<Article> {
 
     public final com.colosseo.model.user.QUser user;
 
+    public final NumberPath<Long> viewCount = createNumber("viewCount", Long.class);
+
     public QArticle(String variable) {
         this(Article.class, forVariable(variable), INITS);
     }

@@ -52,8 +52,11 @@ public class ArticleController {
     }
 
     @GetMapping("/articles/{articleId}")
-    public ResponseEntity<ArticleDto> getArticleDetailWithComments(@PathVariable Long articleId) {
-        ArticleDto articleDto = articleService.getArticleDetailWithComments(articleId);
+    public ResponseEntity<ArticleDto> getArticleDetailWithComments(
+            @PathVariable Long articleId,
+            @AuthenticationPrincipal UserPrincipal userPrincipal
+    ) {
+        ArticleDto articleDto = articleService.getArticleDetailWithComments(articleId, userPrincipal.toDto());
         return ResponseEntity.ok().body(articleDto);
     }
 
@@ -93,7 +96,17 @@ public class ArticleController {
             @PathVariable Long articleId,
             @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
-        articleService.like(articleId, userPrincipal.getUserId());
+        articleService.like(articleId, userPrincipal.toDto());
         return ResponseEntity.created(null).body("success");
+    }
+
+    @DeleteMapping("/articles/{articleId}/like")
+    @Operation(summary = "아티클 좋아요 취소 기능", description = "아티클 좋아요 취소 API")
+    public ResponseEntity<String> unlike(
+            @PathVariable Long articleId,
+            @AuthenticationPrincipal UserPrincipal userPrincipal
+    ) {
+        articleService.deleteArticleLike(articleId, userPrincipal.getUserId());
+        return ResponseEntity.ok().body("success");
     }
 }

@@ -6,24 +6,30 @@ import com.colosseo.dto.article.ArticleResponse;
 import com.colosseo.dto.user.UserDto;
 import com.colosseo.exception.CustomException;
 import com.colosseo.exception.ErrorCode;
+import com.colosseo.global.config.redis.RedisDao;
 import com.colosseo.model.article.Article;
 import com.colosseo.global.enums.SearchType;
-import com.colosseo.model.article.ArticleLike;
+import com.colosseo.model.article.ArticleCount;
 import com.colosseo.model.article.ArticleLikeRepository;
 import com.colosseo.model.user.User;
 import com.colosseo.repository.ArticleDslRepository;
 import com.colosseo.repository.ArticleRepository;
 import com.colosseo.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 import static io.micrometer.common.util.StringUtils.isBlank;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -31,7 +37,7 @@ public class ArticleService {
     private final ArticleRepository articleRepository;
     private final ArticleDslRepository articleDslRepository;
     private final ArticleLikeRepository articleLikeRepository;
-    private final UserRepository userRepository;
+    private final RedisDao redisDao;
 
     public String postArticle(ArticleDto articleDto) {
 
@@ -45,13 +51,24 @@ public class ArticleService {
 //                .map(ArticleWithCommentsDto::from)
 //    }
 
-    @Transactional(readOnly = true)
-    public ArticleDto getArticleDetailWithComments(Long articleId) {
+    public void increaseViewCount() {
+
+    }
+    @Transactional
+    public ArticleDto getArticleDetailWithComments(Long articleId, UserDto userDto) {
         Article article = articleRepository.findById(articleId).orElseThrow(
                 () -> new CustomException(ErrorCode.ARTICLE_NOT_EXISTS)
         );
+        String viewedUser = redisDao.getValues("viewedUser");
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime targetTime = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), 23, 59, 59);
+
+        if (viewedUser == null) {
+            redisDao.setValues("viewedUser", userDto.getUserId().toString(), Duration.between(now, targetTime));
+            article.increaseViewCount();
+        }
+
         return article.toDto();
-//        return "dd";
     }
 
     public String deleteArticle(Long userId, Long articleId) {
@@ -91,25 +108,32 @@ public class ArticleService {
         articleRepository.save(articleRequest.toDto(userDto).toEntity());
     }
 
-    public void like(Long articleId, Long userId) {
+    public void like(Long articleId, UserDto userdto) {
         Article article = articleRepository.findById(articleId).orElseThrow(
                 () -> new CustomException(ErrorCode.ARTICLE_NOT_EXISTS)
         );
-        User user = userRepository.findById(userId).orElseThrow(
-                () -> new CustomException(ErrorCode.USER_NOT_EXIST)
-        );
 
         // like duplication check
-        boolean isLiked = articleLikeRepository.existsByUserIdAndArticleId(articleId, userId);
+        boolean isLiked = articleLikeRepository.existsByUserIdAndArticleId(articleId, userdto.getUserId());
 
         if (isLiked) {
             throw new CustomException(ErrorCode.COMMENT_LIKE_DUPLICATE);
         }
-
-        articleLikeRepository.save(ArticleLike.of(user, article));
+        article.increaseLikeCount();
+        articleLikeRepository.save(ArticleCount.of(userdto.toEntity(), article));
     }
 
     public void unlike(Long articleId, Long userId) {
 
+    }
+
+    public void deleteArticleLike(Long articleId, Long userId) {
+
+        ArticleCount articleCount = articleLikeRepository.findByUserIdAndArticleId(articleId, userId).orElseThrow(
+                () -> new CustomException(ErrorCode.COMMENT_LIKE_NOT_EXIST)
+        );
+
+        articleLikeRepository.deleteById(articleCount.getId());
+        log.info("successfully deleted");
     }
 }

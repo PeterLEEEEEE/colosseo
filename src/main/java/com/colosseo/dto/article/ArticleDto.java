@@ -16,6 +16,7 @@ public class ArticleDto {
     private String title;
     private String content;
     private String nickname;
+    private Long views;
     private Long likes;
     private LocalDateTime createdAt;
     private String createdBy;
@@ -24,12 +25,13 @@ public class ArticleDto {
 
     @Builder
     @QueryProjection
-    public ArticleDto(Long articleId, UserDto userDto, String title, String content, String nickname, Long likes, LocalDateTime createdAt, String createdBy, LocalDateTime updatedAt, String modifiedBy) {
+    public ArticleDto(Long articleId, UserDto userDto, String title, String content, String nickname, Long views, Long likes, LocalDateTime createdAt, String createdBy, LocalDateTime updatedAt, String modifiedBy) {
         this.articleId = articleId;
         this.userDto = userDto;
         this.title = title;
         this.content = content;
         this.nickname = nickname;
+        this.views = views;
         this.likes = likes;
         this.createdAt = createdAt;
         this.createdBy = createdBy;
@@ -38,13 +40,13 @@ public class ArticleDto {
     }
 
     public Article toEntity() {
-        long setLike = likes == null ? 0L : likes;
 
         return Article.builder()
                 .title(title)
                 .content(content)
                 .user(userDto.toEntity())
-                .likeCount(setLike)
+                .viewCount(views)
+                .likeCount(likes)
                 .build();
     }
 

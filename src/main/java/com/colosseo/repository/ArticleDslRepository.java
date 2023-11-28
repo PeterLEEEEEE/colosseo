@@ -6,6 +6,7 @@ import com.colosseo.dto.article.QArticleResponse;
 import com.colosseo.global.enums.SearchType;
 import com.colosseo.model.article.Article;
 import com.colosseo.model.article.QArticle;
+
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 import static com.colosseo.model.article.QArticle.article;
+
 import static com.colosseo.model.user.QUser.user;
 import static org.springframework.util.StringUtils.hasText;
 
@@ -60,6 +62,7 @@ public class ArticleDslRepository {
                     )
                 )
                 .from(article)
+//                .leftJoin(article, articleLike.article)
                 .where(search)
                 .orderBy(article.createdAt.desc())
                 .offset(pageable.getOffset())
