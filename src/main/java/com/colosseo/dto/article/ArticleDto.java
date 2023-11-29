@@ -16,8 +16,8 @@ public class ArticleDto {
     private String title;
     private String content;
     private String nickname;
-    private Long views;
-    private Long likes;
+    private Integer views;
+    private Integer likes;
     private LocalDateTime createdAt;
     private String createdBy;
     private LocalDateTime updatedAt;
@@ -25,7 +25,7 @@ public class ArticleDto {
 
     @Builder
     @QueryProjection
-    public ArticleDto(Long articleId, UserDto userDto, String title, String content, String nickname, Long views, Long likes, LocalDateTime createdAt, String createdBy, LocalDateTime updatedAt, String modifiedBy) {
+    public ArticleDto(Long articleId, UserDto userDto, String title, String content, String nickname, Integer views, Integer likes, LocalDateTime createdAt, String createdBy, LocalDateTime updatedAt, String modifiedBy) {
         this.articleId = articleId;
         this.userDto = userDto;
         this.title = title;

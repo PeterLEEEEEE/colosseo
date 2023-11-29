@@ -14,17 +14,19 @@ public class ArticleResponse {
     private String title;
     private String content;
     private String author;
-    private Long likes;
+    private Integer views;
+    private Integer likes;
     private LocalDateTime createdAt;
 
     @Builder
     @QueryProjection
-    public ArticleResponse(Long articleId, Long userId, String title, String content, String author, Long likes, LocalDateTime createdAt) {
+    public ArticleResponse(Long articleId, Long userId, String title, String content, String author, Integer views, Integer likes, LocalDateTime createdAt) {
         this.articleId = articleId;
         this.userId = userId;
         this.title = title;
         this.content = content;
         this.author = author;
+        this.views = views;
         this.likes = likes;
         this.createdAt = createdAt;
     }
@@ -36,6 +38,7 @@ public class ArticleResponse {
                 .title(article.getTitle())
                 .content(article.getContent())
                 .author(article.getUser().getNickname())
+                .views(article.getViewCount())
                 .likes(article.getLikeCount())
                 .createdAt(article.getCreatedAt())
                 .build();

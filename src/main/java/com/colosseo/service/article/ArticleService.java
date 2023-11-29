@@ -6,17 +6,19 @@ import com.colosseo.dto.article.ArticleResponse;
 import com.colosseo.dto.user.UserDto;
 import com.colosseo.exception.CustomException;
 import com.colosseo.exception.ErrorCode;
+import com.colosseo.global.config.redis.CacheKey;
 import com.colosseo.global.config.redis.RedisDao;
 import com.colosseo.model.article.Article;
 import com.colosseo.global.enums.SearchType;
 import com.colosseo.model.article.ArticleCount;
 import com.colosseo.model.article.ArticleLikeRepository;
-import com.colosseo.model.user.User;
+
 import com.colosseo.repository.ArticleDslRepository;
 import com.colosseo.repository.ArticleRepository;
 import com.colosseo.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.parameters.P;
@@ -55,6 +57,7 @@ public class ArticleService {
 
     }
     @Transactional
+    @Cacheable(cacheNames = CacheKey.ARTICLE, key = "#articleId", cacheManager = "cacheManager")
     public ArticleDto getArticleDetailWithComments(Long articleId, UserDto userDto) {
         Article article = articleRepository.findById(articleId).orElseThrow(
                 () -> new CustomException(ErrorCode.ARTICLE_NOT_EXISTS)
@@ -87,6 +90,7 @@ public class ArticleService {
 
     // Spring data JPA로 페이징
     @Transactional(readOnly = true)
+
     public Page<ArticleResponse> getArticles(Pageable pageable, SearchType searchType, String searchKeyword) {
         if (searchType == null || isBlank(searchKeyword)) {
             return articleRepository.findAll(pageable)
@@ -123,17 +127,18 @@ public class ArticleService {
         articleLikeRepository.save(ArticleCount.of(userdto.toEntity(), article));
     }
 
-    public void unlike(Long articleId, Long userId) {
-
-    }
-
     public void deleteArticleLike(Long articleId, Long userId) {
+        Article article = articleRepository.findById(articleId).orElseThrow(
+                () -> new CustomException(ErrorCode.ARTICLE_NOT_EXISTS)
+        );
 
         ArticleCount articleCount = articleLikeRepository.findByUserIdAndArticleId(articleId, userId).orElseThrow(
                 () -> new CustomException(ErrorCode.COMMENT_LIKE_NOT_EXIST)
         );
 
         articleLikeRepository.deleteById(articleCount.getId());
+        article.decreaseLikeCount();
+
         log.info("successfully deleted");
     }
 }

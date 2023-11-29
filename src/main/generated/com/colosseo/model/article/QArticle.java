@@ -36,7 +36,7 @@ public class QArticle extends EntityPathBase<Article> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final NumberPath<Long> likeCount = createNumber("likeCount", Long.class);
+    public final NumberPath<Integer> likeCount = createNumber("likeCount", Integer.class);
 
     public final StringPath title = createString("title");
 
@@ -48,7 +48,7 @@ public class QArticle extends EntityPathBase<Article> {
 
     public final com.colosseo.model.user.QUser user;
 
-    public final NumberPath<Long> viewCount = createNumber("viewCount", Long.class);
+    public final NumberPath<Integer> viewCount = createNumber("viewCount", Integer.class);
 
     public QArticle(String variable) {
         this(Article.class, forVariable(variable), INITS);

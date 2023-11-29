@@ -23,10 +23,20 @@ public class ArticleCount extends BaseTimeEntity {
     @JoinColumn(name = "article_id")
     private Article article;
 
+    // Redis Cache를 아티클에 적용하고 싶은데 count 값이 계속 업데이트되므로 분리를 시도하여 테스트 해보려 함
+
+    @Column(columnDefinition = "int default 0")
+    private Integer viewCount;
+
+    @Column(columnDefinition = "int default 0")
+    private Integer likeCount;
+
     @Builder
-    public ArticleCount(User user, Article article) {
+    public ArticleCount(User user, Article article, Integer viewCount, Integer likeCount) {
         this.user = user;
         this.article = article;
+        this.viewCount = viewCount;
+        this.likeCount = likeCount;
     }
 
 

@@ -31,10 +31,14 @@ public class QArticleCount extends EntityPathBase<ArticleCount> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
+    public final NumberPath<Integer> likeCount = createNumber("likeCount", Integer.class);
+
     //inherited
     public final DateTimePath<java.time.LocalDateTime> updatedAt = _super.updatedAt;
 
     public final com.colosseo.model.user.QUser user;
+
+    public final NumberPath<Integer> viewCount = createNumber("viewCount", Integer.class);
 
     public QArticleCount(String variable) {
         this(ArticleCount.class, forVariable(variable), INITS);

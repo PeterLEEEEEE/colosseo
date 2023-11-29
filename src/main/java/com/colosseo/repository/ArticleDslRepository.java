@@ -57,6 +57,7 @@ public class ArticleDslRepository {
                         article.title,
                         article.content,
                         article.user.nickname.as("author"),
+                        article.viewCount.as("views"),
                         article.likeCount.as("likes"),
                         article.createdAt
                     )

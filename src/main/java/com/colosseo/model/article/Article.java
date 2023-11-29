@@ -31,11 +31,11 @@ public class Article extends BaseEntity {
 
 
     @Column(columnDefinition = "int default 0")
-    private Long viewCount;
+    private Integer viewCount;
 
 
     @Column(columnDefinition = "int default 0")
-    private Long likeCount;
+    private Integer likeCount;
 
 //    private String author;
 
@@ -49,7 +49,7 @@ public class Article extends BaseEntity {
     private User user;
 
     @Builder
-    public Article(Long id, String title, String content, Long viewCount, Long likeCount, List<ArticleComment> articleCommentList, User user) {
+    public Article(Long id, String title, String content, Integer viewCount, Integer likeCount, List<ArticleComment> articleCommentList, User user) {
         this.id = id;
         this.title = title;
         this.content = content;
@@ -89,4 +89,6 @@ public class Article extends BaseEntity {
     public void increaseLikeCount() {
         this.likeCount += 1;
     }
+
+    public void decreaseLikeCount() { this.likeCount -=1; }
 }
