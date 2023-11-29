@@ -3,7 +3,7 @@
 time=$(date)
 
 echo "Building App..."
-cd /home/nunaps/dev/springman/colosseo
+cd /home/dev/springman/colosseo
 git pull origin main
 ./gradlew clean build
 
