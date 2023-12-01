@@ -7,10 +7,12 @@ import com.querydsl.core.annotations.QueryProjection;
 import jakarta.validation.constraints.Email;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Getter
+@NoArgsConstructor
 public class UserDto {
     private Long userId;
     private String email;

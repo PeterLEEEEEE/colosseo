@@ -53,8 +53,8 @@ public class ArticleService {
 //                .map(ArticleWithCommentsDto::from)
 //    }
 
-    public void increaseViewCount() {
-
+    public String generateUserKey(Long userId) {
+        return "userId::" + userId;
     }
     @Transactional
     @Cacheable(cacheNames = CacheKey.ARTICLE, key = "#articleId", cacheManager = "cacheManager")
@@ -62,14 +62,14 @@ public class ArticleService {
         Article article = articleRepository.findById(articleId).orElseThrow(
                 () -> new CustomException(ErrorCode.ARTICLE_NOT_EXISTS)
         );
-        String viewedUser = redisDao.getValues("viewedUser");
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime targetTime = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), 23, 59, 59);
-
-        if (viewedUser == null) {
-            redisDao.setValues("viewedUser", userDto.getUserId().toString(), Duration.between(now, targetTime));
-            article.increaseViewCount();
-        }
+//        String userKey = redisDao.getValues("userId" + userDto.getUserId());
+//        LocalDateTime now = LocalDateTime.now();
+//        LocalDateTime targetTime = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), 23, 59, 59);
+//
+//        if (!Objects.equals(userKey, generateUserKey(userDto.getUserId()))) {
+//            redisDao.setValues(userKey, String.valueOf(now.toLocalDate()), Duration.between(now, targetTime));
+//            article.increaseViewCount();
+//        }
 
         return article.toDto();
     }
