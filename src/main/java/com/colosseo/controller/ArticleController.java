@@ -3,6 +3,7 @@ package com.colosseo.controller;
 import com.colosseo.dto.article.ArticleDto;
 import com.colosseo.dto.article.ArticleRequest;
 import com.colosseo.dto.article.ArticleResponse;
+import com.colosseo.dto.article.ArticleWithCommentsDto;
 import com.colosseo.global.config.security.UserPrincipal;
 import com.colosseo.global.enums.SearchType;
 
@@ -52,11 +53,11 @@ public class ArticleController {
     }
 
     @GetMapping("/articles/{articleId}")
-    public ResponseEntity<ArticleDto> getArticleDetailWithComments(
+    public ResponseEntity<ArticleWithCommentsDto> getArticleDetailWithComments(
             @PathVariable Long articleId,
             @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
-        ArticleDto articleDto = articleService.getArticleDetailWithComments(articleId, userPrincipal.toDto());
+        ArticleWithCommentsDto articleDto = articleService.getArticleDetailWithComments(articleId, userPrincipal.toDto());
         return ResponseEntity.ok().body(articleDto);
     }
 

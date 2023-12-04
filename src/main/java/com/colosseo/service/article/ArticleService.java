@@ -3,6 +3,7 @@ package com.colosseo.service.article;
 import com.colosseo.dto.article.ArticleDto;
 import com.colosseo.dto.article.ArticleRequest;
 import com.colosseo.dto.article.ArticleResponse;
+import com.colosseo.dto.article.ArticleWithCommentsDto;
 import com.colosseo.dto.user.UserDto;
 import com.colosseo.exception.CustomException;
 import com.colosseo.exception.ErrorCode;
@@ -56,10 +57,14 @@ public class ArticleService {
     public String generateUserKey(Long userId) {
         return "userId::" + userId;
     }
-    @Transactional
+
+
     @Cacheable(cacheNames = CacheKey.ARTICLE, key = "#articleId", cacheManager = "cacheManager")
-    public ArticleDto getArticleDetailWithComments(Long articleId, UserDto userDto) {
-        Article article = articleRepository.findById(articleId).orElseThrow(
+    @Transactional
+    public ArticleWithCommentsDto getArticleDetailWithComments(Long articleId, UserDto userDto) {
+        ArticleWithCommentsDto article = articleRepository.findById(articleId)
+                .map(ArticleWithCommentsDto::from)
+                .orElseThrow(
                 () -> new CustomException(ErrorCode.ARTICLE_NOT_EXISTS)
         );
 //        String userKey = redisDao.getValues("userId" + userDto.getUserId());
@@ -71,7 +76,9 @@ public class ArticleService {
 //            article.increaseViewCount();
 //        }
 
-        return article.toDto();
+    return article;
+
+//        return article.toDto();
     }
 
     public String deleteArticle(Long userId, Long articleId) {

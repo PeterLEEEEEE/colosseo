@@ -6,6 +6,7 @@ import com.colosseo.model.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 
+import javax.xml.stream.events.Comment;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -24,12 +25,13 @@ public class ArticleComment extends BaseEntity {
     private Long id;
 
     @Setter
-    @Column(updatable = false)
-    private Long parentCommentId; // 부모 댓글 식별
+    @JoinColumn(name="parent_comment_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private ArticleComment parentComment; // 부모 댓글 식별
 
     @ToString.Exclude // 자기 자신을 보고 있으면 무한으로 참조하니까 이거 넣어야 함
     @OrderBy("createdAt ASC")
-    @OneToMany(mappedBy = "parentCommentId", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "parentComment", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<ArticleComment> childComments = new ArrayList<>();
 
     @Column(nullable = false, length = 255)
@@ -37,17 +39,16 @@ public class ArticleComment extends BaseEntity {
 
     @Setter
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn
+    @JoinColumn(name="article_id", nullable = false)
     private Article article;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @JoinColumn(name="user_id", nullable = false)
     private User user;
 
     @Builder
-    public ArticleComment(Long parentCommentId, List<ArticleComment> childComments, String comment, Article article, User user) {
-        this.parentCommentId = parentCommentId;
-        this.childComments = childComments;
+    public ArticleComment(ArticleComment parentComment, String comment, Article article, User user) {
+        this.parentComment = parentComment;
         this.comment = comment;
         this.article = article;
         this.user = user;
@@ -58,7 +59,7 @@ public class ArticleComment extends BaseEntity {
     }
 
     public void addChildComment(ArticleComment child) {
-        child.setParentCommentId(this.getId());
+        child.setParentComment(this.getParentComment());
         this.getChildComments().add(child);
     }
 

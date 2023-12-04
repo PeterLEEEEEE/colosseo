@@ -41,7 +41,7 @@ public class Article extends BaseEntity {
 
     @ToString.Exclude // 순환 참조 방지
     @OrderBy("id ASC, createdAt DESC")
-    @OneToMany(mappedBy="article", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy="article", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<ArticleComment> articleCommentList = new ArrayList<>();
 
     @ToString.Exclude
@@ -70,6 +70,7 @@ public class Article extends BaseEntity {
                 .views(viewCount)
                 .likes(likeCount)
                 .userDto(getUser().toDto())
+                .articleComments(articleCommentList)
                 .title(title)
                 .content(content)
                 .createdAt(getCreatedAt())

@@ -14,23 +14,23 @@ import java.util.stream.Collectors;
 public class ArticleWithCommentsDto {
     private Long articleId;
     private UserDto userDto;
+    private List<ArticleCommentDto> articleCommentDtoList;
     private String title;
     private String content;
     private LocalDateTime createdAt;
     private String createdBy;
-    private List<ArticleCommentDto> articleCommentDtoList;
 
-//    public static ArticleWithCommentsDto from(Article article) {
-//        return new ArticleWithCommentsDto(
-//            article.getId(),
-//            UserDto.from(article.getUser()),
-//            article.getArticleCommentList().stream()
-//                    .map(ArticleCommentDto::from)
-//                    .collect(Collectors.toCollection(ArrayList::new)),
-//            article.getTitle(),
-//            article.getContent(),
-//            article.getCreatedAt(),
-//            article.getCreatedBy()
-//        );
-//    }
+    public static ArticleWithCommentsDto from(Article article) {
+        return new ArticleWithCommentsDto(
+            article.getId(),
+            UserDto.from(article.getUser()),
+            article.getArticleCommentList().stream()
+                    .map(ArticleCommentDto::from)
+                    .collect(Collectors.toCollection(ArrayList::new)),
+            article.getTitle(),
+            article.getContent(),
+            article.getCreatedAt(),
+            article.getCreatedBy()
+        );
+    }
 }

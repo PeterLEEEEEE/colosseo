@@ -19,9 +19,9 @@ server:
       force: true
 
 spring:
-#  config:
-#    activate:
-#      on-profile: local
+  config:
+    activate:
+      on-profile: local
   cache:
     type: redis
   mvc:
@@ -38,7 +38,7 @@ spring:
   jpa:
     properties:
       hibernate:
-        ddl-auto: validate
+        ddl-auto: update
         show_sql: true
         format_sql: true
         default_batch_fetch_size: 100 # n+1 문제 해결 방법 중 하나
