@@ -26,12 +26,11 @@ public class ArticleComment extends BaseEntity {
 
     @Setter
     @JoinColumn(name="parent_comment_id")
-    @ManyToOne(fetch = FetchType.LAZY)
-    private ArticleComment parentComment; // 부모 댓글 식별
+    private Long parentCommentId; // 부모 댓글 식별
 
     @ToString.Exclude // 자기 자신을 보고 있으면 무한으로 참조하니까 이거 넣어야 함
     @OrderBy("createdAt ASC")
-    @OneToMany(mappedBy = "parentComment", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "parentCommentId", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<ArticleComment> childComments = new ArrayList<>();
 
     @Column(nullable = false, length = 255)
@@ -47,8 +46,8 @@ public class ArticleComment extends BaseEntity {
     private User user;
 
     @Builder
-    public ArticleComment(ArticleComment parentComment, String comment, Article article, User user) {
-        this.parentComment = parentComment;
+    public ArticleComment(Long parentCommentId, String comment, Article article, User user) {
+        this.parentCommentId = parentCommentId;
         this.comment = comment;
         this.article = article;
         this.user = user;
@@ -59,7 +58,7 @@ public class ArticleComment extends BaseEntity {
     }
 
     public void addChildComment(ArticleComment child) {
-        child.setParentComment(this.getParentComment());
+        child.setParentCommentId(this.getId());
         this.getChildComments().add(child);
     }
 

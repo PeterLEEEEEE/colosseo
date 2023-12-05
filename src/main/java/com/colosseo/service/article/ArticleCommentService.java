@@ -19,14 +19,13 @@ import javax.xml.stream.events.Comment;
 
 @Slf4j
 @Service
-
+@Transactional
 @RequiredArgsConstructor
 public class ArticleCommentService {
 
     private final ArticleCommentRepository articleCommentRepository;
     private final ArticleRepository articleRepository;
 
-    @Transactional
     public String postArticleComment(ArticleCommentDto articleCommentDto, Long articleId) {
         Article article = articleRepository.findById(articleId).orElseThrow(
                 () -> new CustomException(ErrorCode.ARTICLE_NOT_EXISTS)
@@ -36,10 +35,15 @@ public class ArticleCommentService {
 //                .userDto(userDto)
 //                .comment(articleCommentRequest.getComment())
 //                .build();
-        ArticleComment articleComment = articleCommentDto.toEntity();
+        ArticleComment articleComment = articleCommentDto.toEntity(article);
 
-//        articleCommentRepository.save(articleComment);
-        article.addComment(articleComment);
+        if (articleComment.getParentCommentId() != null) {
+            ArticleComment parentComment = articleCommentRepository.findById(articleComment.getParentCommentId())
+                    .orElseThrow(() -> new CustomException(ErrorCode.COMMENT_NOT_EXISTS));
+            parentComment.addChildComment(articleComment);
+        } else {
+            articleCommentRepository.save(articleComment);
+        }
 
         return "successfully written(article comment)";
     }

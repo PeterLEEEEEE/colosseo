@@ -4,12 +4,14 @@ import com.colosseo.dto.articleComment.ArticleCommentDto;
 import com.colosseo.dto.user.UserDto;
 import com.colosseo.model.article.Article;
 import lombok.Builder;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Getter
 @Builder
 public class ArticleWithCommentsDto {
     private Long articleId;
