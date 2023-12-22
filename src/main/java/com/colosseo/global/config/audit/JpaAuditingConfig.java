@@ -1,5 +1,6 @@
 package com.colosseo.global.config.audit;
 
+import com.colosseo.global.config.security.SecurityUtils;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
@@ -17,11 +18,17 @@ public class JpaAuditingConfig implements AuditorAware<String> {
     @Override
     public Optional<String> getCurrentAuditor() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()) {
+        Optional<String> userName = SecurityUtils.getCurrentUsername();
+
+        if (userName.isEmpty() || !authentication.isAuthenticated()) {
             return Optional.of(DEFAULT);
         }
 
-        return Optional.of(authentication.getPrincipal().toString());
+//        if (authentication == null || !authentication.isAuthenticated()) {
+//            return Optional.of(DEFAULT);
+//        }
+
+        return userName;
 //        return Optional.of(DEFAULT);
     }
 }
