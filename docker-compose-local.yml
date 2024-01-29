@@ -8,7 +8,7 @@ services:
 #  colosseo-nginx:
 #    container_name: colosseo-nginx
 #    build:
-#      dockerfile: Dockerfile
+#      Dockerfile: Dockerfile
 #      context: ./nginx
 #    image: mhlee1994/colosseo-nginx
 #    ports:
@@ -35,7 +35,7 @@ services:
 #  colosseo-app:
 #    container_name: colosseo-app
 #    build:
-#      dockerfile: Dockerfile
+#      Dockerfile: Dockerfile
 #      context: .
 #    image: mhlee1994/colosseo-app
 #    volumes:
@@ -55,3 +55,28 @@ services:
       context: ./redis
     ports:
       - '6379:6379'
+
+  colosseo-prometheus:
+    image: mhlee1994/colosseo-prometheus
+    container_name: colosseo-prometheus
+    build:
+      dockerfile: Dockerfile
+      context: ./prometheus
+    ports:
+      - '9090:9090'
+    volumes:
+      - type: bind
+        source: ./prometheus/config.yaml
+        target: /etc/prometheus/prometheus.yml
+        read_only: true
+
+  colosseo-grafana:
+    image: mhlee1994/colosseo-grafana
+    container_name: colosseo-granfana
+    build:
+      dockerfile: Dockerfile
+      context: ./grafana
+    ports:
+      - '3000:3000'
+    links:
+      - colosseo-prometheus

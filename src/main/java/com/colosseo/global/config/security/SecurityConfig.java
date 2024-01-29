@@ -7,6 +7,7 @@ import com.colosseo.global.config.security.oauth.CustomOAuth2UserService;
 import com.colosseo.global.config.security.oauth.HttpCookieOAuth2AuthorizationRequestRepository;
 import com.colosseo.global.config.security.oauth.OAuth2AuthenticationFailureHandler;
 import com.colosseo.global.config.security.oauth.OAuth2AuthenticationSuccessHandler;
+import com.colosseo.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.actuate.autoconfigure.observation.ObservationProperties;
@@ -24,6 +25,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
@@ -39,6 +41,7 @@ public class SecurityConfig {
     private final AuthenticationEntryPoint authenticationEntryPoint;
     private final CustomOAuth2UserService customOAuth2UserService;
     private final ObjectMapper objectMapper;
+    private final UserRepository userRepository;
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
     private final CustomAuthenticationEntrypoint customAuthenticationEntrypoint;
 //    private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
@@ -55,11 +58,13 @@ public class SecurityConfig {
             "/v1/api-docs/**",
             "/swagger-ui/**",
             "/docs/**",
-            "/oauth2/callback/**",
             "/oauth/**",
+            "/oauth2/**",
+            "/oauth2/callback/**",
             "/favicon.ico",
             "/api/v1/login",
             "/api/v1/signup",
+//            "/actuator/**",
 //            "/api/v1/health-check"
     };
 
@@ -89,6 +94,7 @@ public class SecurityConfig {
 //                "/oauth2/**",
                 "/api/v1/email-verification",
                 "/api/v1/email-confirm/**",
+                "/actuator/**",
                 "/v3/api-docs/**" // 이거 설정안하면 스웨거가 안뜸;;
         );
     }
@@ -124,7 +130,23 @@ public class SecurityConfig {
 //                    .requestMatchers("/admin/**")
 //                        .access(new WebExpressionAuthorizationManager("hasRole('ROLE_ADMIN') AND hasAuthority('WRITE')"))
                     .anyRequest().authenticated()
-            );
+            )
+            .oauth2Login(oauth2 -> {
+                oauth2
+//                        .successHandler(oAuth2AuthenticationSuccessHandler())
+                        .successHandler(successHandler())
+                        .failureHandler(oAuth2AuthenticationFailureHandler())
+                        .authorizationEndpoint(authorizationEndpoint -> {
+                            authorizationEndpoint.baseUri("/oauth2/authorization");
+                        })
+                        .redirectionEndpoint(redirection -> {
+                            redirection.baseUri("/oauth2/callback/*");
+                        })
+                        .userInfoEndpoint(userInfo ->
+                                userInfo.userService(customOAuth2UserService)
+                        );
+
+            });
 
 //                .oauth2Login()
 //                .authorizationEndpoint()
@@ -157,12 +179,16 @@ public class SecurityConfig {
 //         return filter;
 //    }
     @Bean
-    public OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler() {
-        return new OAuth2AuthenticationSuccessHandler(
-                tokenProvider,
-                cookieOAuth2AuthorizationRequestRepository()
-        );
+    public AuthenticationSuccessHandler successHandler() {
+        return new OAuth2AuthenticationSuccessHandler(tokenProvider);
     }
+//    @Bean
+//    public OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler() {
+//        return new OAuth2AuthenticationSuccessHandler(
+//                tokenProvider,
+//                cookieOAuth2AuthorizationRequestRepository()
+//        );
+//    }
     @Bean
     public OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler() {
         return new OAuth2AuthenticationFailureHandler(cookieOAuth2AuthorizationRequestRepository());

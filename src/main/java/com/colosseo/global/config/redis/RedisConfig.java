@@ -36,6 +36,16 @@ public class RedisConfig {
         return redisTemplate;
     }
 
+    @Bean
+    public RedisTemplate<?, ?> redisCountTemplate() {
+        RedisTemplate<byte[], byte[]> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        redisTemplate.setValueSerializer(new StringRedisSerializer());
+        redisTemplate.setConnectionFactory(redisConnectionFactory());
+
+        return redisTemplate;
+    }
+
     // 이거 말고 CacheConfig 사용할듯
     @Bean
     public RedisTemplate<String, Object> entityRedisTemplate() {

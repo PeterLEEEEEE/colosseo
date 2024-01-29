@@ -8,6 +8,7 @@ import com.colosseo.global.config.security.UserPrincipal;
 import com.colosseo.global.enums.SearchType;
 
 import com.colosseo.model.article.Article;
+import com.colosseo.service.article.ArticleCacheService;
 import com.colosseo.service.article.ArticleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -34,6 +35,7 @@ import org.springframework.web.bind.annotation.*;
 public class ArticleController {
 
     private final ArticleService articleService;
+    private final ArticleCacheService articleCacheService;
 
 //    @Operation(summary = "특정 게시글과 댓글 가져오기", description = "유저 로그인 API")
 //    @GetMapping("/{articleId}")
@@ -57,6 +59,8 @@ public class ArticleController {
             @PathVariable Long articleId,
             @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
+
+        articleCacheService.increaseArticleViewCount(articleId);
         ArticleWithCommentsDto articleDto = articleService.getArticleDetailWithComments(articleId, userPrincipal.toDto());
         return ResponseEntity.ok().body(articleDto);
     }
@@ -89,6 +93,13 @@ public class ArticleController {
             @PageableDefault(size = 10,  sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
             ) {
         return ResponseEntity.ok().body(articleService.getArticles(pageable, searchType, searchValue));
+    }
+
+    @GetMapping("/articles/today/best-view")
+    @Operation(summary = "오늘 조회수 베스트 글", description = "하루동안 가장 많은 조회수를 기록한 상위 5개 글 가져오기")
+    public ResponseEntity<String> getTodayBestArticles() {
+//        return ResponseEntity.ok().body(articleService.getMostViewedArticle());
+        return ResponseEntity.ok().body("dd");
     }
 
     @PostMapping("/articles/{articleId}/likes")

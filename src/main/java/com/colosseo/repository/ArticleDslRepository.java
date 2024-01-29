@@ -1,14 +1,8 @@
 package com.colosseo.repository;
 
-import com.colosseo.dto.article.ArticleDto;
 import com.colosseo.dto.article.ArticleResponse;
 import com.colosseo.dto.article.QArticleResponse;
 import com.colosseo.global.enums.SearchType;
-import com.colosseo.model.article.Article;
-import com.colosseo.model.article.QArticle;
-
-import com.querydsl.core.QueryResults;
-import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -20,8 +14,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 import static com.colosseo.model.article.QArticle.article;
-
-import static com.colosseo.model.user.QUser.user;
 import static org.springframework.util.StringUtils.hasText;
 
 @Repository
@@ -51,16 +43,16 @@ public class ArticleDslRepository {
         }
 
         List<ArticleResponse> result = queryFactory.select(
-                    new QArticleResponse(
-                        article.id.as("articleId"),
-                        article.user.id.as("userId"),
-                        article.title,
-                        article.content,
-                        article.user.nickname.as("author"),
-                        article.viewCount.as("views"),
-                        article.likeCount.as("likes"),
-                        article.createdAt
-                    )
+                        new QArticleResponse(
+                                article.id.as("articleId"),
+                                article.user.id.as("userId"),
+                                article.title,
+                                article.content,
+                                article.user.nickname.as("author"),
+                                article.viewCount.as("views"),
+                                article.likeCount.as("likes"),
+                                article.createdAt
+                        )
                 )
                 .from(article)
 //                .leftJoin(article, articleLike.article)
@@ -77,7 +69,14 @@ public class ArticleDslRepository {
 
 
         return new PageImpl<>(result, pageable, count);
+    }
 
+    public void addViewCntFromRedis(Long articleId, Integer viewCnt) {
+        queryFactory.update(article)
+                .set(article.viewCount, viewCnt)
+                .where(article.id.eq(articleId))
+                .execute();
+    }
 //        queryFactory.select(new QArticleDto())
 //                .from(article)
 //                .where(
@@ -87,7 +86,7 @@ public class ArticleDslRepository {
 //        return queryFactory.selectFrom(article)
 //                .where(article.title.eq(title))
 //                .fetch();
-    }
+//    }
 
 //    public List<ArticleDto> findArticleByContent(final String content) {
 //        return queryFactory.select(new QArticleDto(

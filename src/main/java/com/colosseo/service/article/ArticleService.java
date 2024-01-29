@@ -28,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 import static io.micrometer.common.util.StringUtils.isBlank;
@@ -40,6 +41,7 @@ public class ArticleService {
     private final ArticleRepository articleRepository;
     private final ArticleDslRepository articleDslRepository;
     private final ArticleLikeRepository articleLikeRepository;
+
     private final RedisDao redisDao;
 
     public String postArticle(ArticleDto articleDto) {
@@ -54,9 +56,9 @@ public class ArticleService {
 //                .map(ArticleWithCommentsDto::from)
 //    }
 
-    public String generateUserKey(Long userId) {
-        return "userId::" + userId;
-    }
+//    public String generateUserKey(Long userId) {
+//        return "userId::" + userId;
+//    }
 
 
     @Cacheable(cacheNames = CacheKey.ARTICLE, key = "#articleId", cacheManager = "cacheManager")
@@ -97,7 +99,6 @@ public class ArticleService {
 
     // Spring data JPA로 페이징
     @Transactional(readOnly = true)
-
     public Page<ArticleResponse> getArticles(Pageable pageable, SearchType searchType, String searchKeyword) {
         if (searchType == null || isBlank(searchKeyword)) {
             return articleRepository.findAll(pageable)
@@ -148,4 +149,9 @@ public class ArticleService {
 
         log.info("successfully deleted");
     }
+
+//    public List<ArticleResponse> getMostViewedArticle() {
+//        return articleRepository.findTop5ByOrderByViewCountDesc()
+//                .map(ArticleResponse::from);
+//    }
 }

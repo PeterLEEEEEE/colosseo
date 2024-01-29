@@ -4,6 +4,7 @@ import com.colosseo.exception.ErrorCode;
 import com.colosseo.global.config.redis.RedisDao;
 import com.colosseo.global.config.security.CustomUserDetailsService;
 import com.colosseo.global.config.security.SecurityUtils;
+import com.colosseo.global.config.security.UserPrincipal;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.*;
@@ -54,8 +55,10 @@ public class TokenProvider implements InitializingBean {
     public String generateToken(Authentication authentication, long expirationTimeMillis) {
         Claims claims = Jwts.claims();
         String authorities = SecurityUtils.getAuthorities(authentication);
+        UserPrincipal user = (UserPrincipal) authentication.getPrincipal();
+
         claims.put("auth", authorities);
-        claims.put("sub", authentication.getName());
+        claims.put("sub", user.getEmail());
 
         return Jwts.builder()
                 .setClaims(claims)

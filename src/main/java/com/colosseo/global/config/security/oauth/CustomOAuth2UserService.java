@@ -36,19 +36,20 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         Optional<User> user = userRepository.findByEmail(providerEmail);
 
         if (user.isPresent()) {
-            if (user.get().getProviderType().equals(ProviderType.LOCAL)) {
-                user.get().setProviderType(ProviderType.valueOf(providerEmail));
-            }
-            if (!user.get().getProviderType().toString().equals(oAuth2UserInfo.getProvider())) {
-                throw new CustomException(ErrorCode.PROVIDER_ALREADY_EXIST);
-            }
+            return UserPrincipal.of(user.get());
+//            if (user.get().getProviderType().equals(ProviderType.LOCAL)) {
+//                user.get().setProviderType(ProviderType.valueOf(providerEmail));
+//            }
+//            if (!user.get().getProviderType().toString().equals(oAuth2UserInfo.getProvider())) {
+//                throw new CustomException(ErrorCode.PROVIDER_ALREADY_EXIST);
+//            }
         } else {
             return UserPrincipal.of(createUser(oAuth2UserInfo, providerType));
         }
 //        User user = userRepository.findByEmail(providerEmail)
 //                .orElseGet(() -> createUser(oAuth2UserInfo, providerType));
 
-        return UserPrincipal.of(user.get());
+//        return UserPrincipal.of(user.get());
     }
 
     private User createUser(OAuth2UserInfo userInfo, ProviderType providerType) {
@@ -63,7 +64,4 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         return userRepository.save(user);
     }
 
-//    private User updateUser(User user, OAuth2UserInfo userInfo) {
-//
-//    }
 }

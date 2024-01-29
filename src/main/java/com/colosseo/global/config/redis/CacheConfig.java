@@ -100,6 +100,7 @@ public class CacheConfig {
                 );
 
         HashMap<String, RedisCacheConfiguration> cacheConfigMap = new HashMap<>();
+
         cacheConfigMap.put(CacheKey.ARTICLE, RedisCacheConfiguration.defaultCacheConfig()
                 .disableCachingNullValues()
                 .entryTtl(Duration.ofHours(CacheKey.ARTICLE_EXPIRATION_HOUR))
@@ -111,6 +112,7 @@ public class CacheConfig {
                         RedisSerializationContext.SerializationPair.fromSerializer(jsonRedisSerializer())
                 )
         );
+
         cacheConfigMap.put(CacheKey.USER, RedisCacheConfiguration.defaultCacheConfig()
                 .disableCachingNullValues()
                 .entryTtl(Duration.ofHours(CacheKey.USER_EXPIRATION_HOUR))

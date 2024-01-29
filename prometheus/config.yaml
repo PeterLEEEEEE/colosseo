@@ -1,0 +1,8 @@
+global:
+  scrape_interval: 30s # 5초마다 Metric pull
+#  evaluation_interval: 30s
+scrape_configs:
+  - job_name: 'colosseo-server'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['host.docker.internal:8888']

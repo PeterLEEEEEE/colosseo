@@ -1,17 +1,20 @@
 package com.colosseo.service.user;
 
-import com.colosseo.dto.user.TokenRequestDto;
-import com.colosseo.dto.user.TokenResponseDto;
-import com.colosseo.dto.user.UserLoginRequestDto;
-import com.colosseo.dto.user.UserSignupRequestDto;
+import com.colosseo.dto.alarm.AlarmResponse;
+import com.colosseo.dto.follow.FollowDto;
+import com.colosseo.dto.user.*;
 import com.colosseo.exception.ErrorCode;
 import com.colosseo.global.config.redis.RedisDao;
 import com.colosseo.global.config.security.CustomAuthenticationProvider;
 import com.colosseo.global.config.security.jwt.TokenProvider;
 import com.colosseo.exception.CustomException;
+import com.colosseo.repository.AlarmRepository;
+import com.colosseo.repository.FollowerRepository;
 import com.colosseo.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -28,6 +31,8 @@ import java.util.concurrent.TimeUnit;
 public class UserService {
     private final CustomAuthenticationProvider customAuthenticationProvider;
     private final PasswordEncoder passwordEncoder;
+    private final FollowerRepository followerRepository;
+    private final AlarmRepository alarmRepository;
     private final UserRepository userRepository;
     private final TokenProvider tokenProvider;
     private final RedisDao redisDao;
@@ -72,5 +77,18 @@ public class UserService {
         redisDao.setValues(accessToken, "logout", expiration, TimeUnit.MILLISECONDS);
 
         return "정상적으로 로그아웃 되었습니다.";
+    }
+
+    public Page<AlarmResponse> alarmList(UserDto userDto, Pageable pageable) {
+        return alarmRepository.findAllByUserId(userDto.getUserId(), pageable).map(AlarmResponse::toDto);
+    }
+
+    public void followUser(Long targetUserId, Long followerId) {
+        FollowDto followDto = FollowDto.builder()
+                .followeeId(targetUserId)
+                .followerId(followerId)
+                .build();
+
+        followerRepository.save(followDto.toEntity());
     }
 }

@@ -1,21 +1,19 @@
 package com.colosseo.global.config.security.oauth;
 
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+@Getter
 public abstract class OAuth2UserInfo {
 
     protected Map<String, Object> attributes;
 
     public OAuth2UserInfo(Map<String, Object> attributes) {
         this.attributes = attributes;
-    }
-
-    public Map<String, Object> getAttributes() {
-        return attributes;
     }
 
     String getId() {

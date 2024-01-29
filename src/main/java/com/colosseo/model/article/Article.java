@@ -6,6 +6,7 @@ import com.colosseo.model.articleComment.ArticleComment;
 import com.colosseo.model.user.User;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,11 +30,11 @@ public class Article extends BaseEntity {
     @Column(nullable = false, length = 2047)
     private String content;
 
-
+    @ColumnDefault("0")
     @Column(columnDefinition = "int default 0")
     private Integer viewCount;
 
-
+    @ColumnDefault("0")
     @Column(columnDefinition = "int default 0")
     private Integer likeCount;
 
