@@ -1,1 +1,5 @@
 rootProject.name = 'colosseo'
+
+include 'colosseo-core'
+include 'colosseo-api'
+include 'colosseo-chat'

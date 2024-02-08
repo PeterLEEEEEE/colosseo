@@ -1,0 +1,153 @@
+buildscript {
+    ext {
+        queryDslVersion = "5.0.0"
+    }
+}
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.2.0'
+    id 'io.spring.dependency-management' version '1.1.2'
+    id 'org.asciidoctor.jvm.convert' version '3.3.2'
+}
+
+group = 'com'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    sourceCompatibility = '17'
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+    asciidoctorExt
+}
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    set('snippetsDir', file("build/generated-snippets"))
+    asciidocVersion = "3.0.0"
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'io.micrometer:micrometer-registry-prometheus'
+    implementation 'org.springframework.boot:spring-boot-starter-batch'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+    compileOnly 'org.projectlombok:lombok'
+
+    // spring rest docs settings
+    asciidoctorExt "org.springframework.restdocs:spring-restdocs-asciidoctor:${asciidocVersion}"
+    testImplementation "org.springframework.restdocs:spring-restdocs-mockmvc:${asciidocVersion}"
+
+    runtimeOnly 'com.mysql:mysql-connector-j'
+
+
+    runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.batch:spring-batch-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+
+    // queryDsl setup
+    implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
+    annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jakarta"
+    annotationProcessor "jakarta.annotation:jakarta.annotation-api"
+    annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+
+    // swagger setup
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    // jwt setup
+    implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.5'
+    runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.5'
+    runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.5'
+    implementation 'jakarta.validation:jakarta.validation-api:3.0.0'
+
+    // db column json type
+    implementation 'io.hypersistence:hypersistence-utils-hibernate-60:3.3.1'
+    implementation 'com.fasterxml.jackson.module:jackson-module-jakarta-xmlbind-annotations'
+
+    // webSocket setup
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+    implementation 'org.webjars:sockjs-client:1.5.1'
+    implementation 'org.webjars:stomp-websocket:2.3.4'
+    implementation 'org.springframework:spring-messaging:6.0.3'
+    implementation 'org.springframework.security:spring-security-messaging:6.0.2'
+
+    testCompileOnly "org.projectlombok:lombok"
+    testAnnotationProcessor "org.projectlombok:lombok"
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+}
+
+// queryDsl setup
+def generated = 'src/main/generated'
+
+// querydsl QClass 파일 생성 위치를 지정
+tasks.withType(JavaCompile) {
+    options.getGeneratedSourceOutputDirectory().set(file(generated))
+}
+
+// java source set 에 querydsl QClass 위치 추가
+sourceSets {
+    main.java.srcDirs += [ generated ]
+}
+
+// gradle clean 시 QClass 삭제
+clean {
+    delete file('src/main/generated')
+}
+
+tasks.named('test') {
+    outputs.dir snippetsDir
+    useJUnitPlatform()
+}
+
+tasks.named('asciidoctor') {
+    inputs.dir snippetsDir
+    dependsOn test
+}
+
+// jar 파일 하나만
+jar {
+    enabled = false
+}
+
+// spring rest docs
+asciidoctor {
+    inputs.dir snippetsDir
+    configurations 'asciidoctorExt'
+    dependsOn test
+}
+
+test {
+    outputs.dir snippetsDir
+}
+
+bootJar {
+    dependsOn asciidoctor
+
+    copy {
+        from asciidoctor.outputDir
+        into "src/main/resources/static/docs"
+    }
+//    from ("${asciidoctor.outputDir}/html5") {
+//        into 'static/docs'
+//    }
+}
+
+// 테스트 코드를 제외한 빌드 수행
+tasks.withType(Test) {
+    enabled = false
+}
