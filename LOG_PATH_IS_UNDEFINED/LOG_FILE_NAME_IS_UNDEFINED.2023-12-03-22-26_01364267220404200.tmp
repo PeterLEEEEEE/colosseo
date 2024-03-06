@@ -26,4 +26,4 @@ org.springframework.boot.context.config.InvalidConfigDataPropertyException: Prop
 	at org.springframework.boot.SpringApplication.run(SpringApplication.java:318)
 	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1342)
 	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1331)
-	at com.colosseo.ColosseoApplication.main(ColosseoApplication.java:12)
+	at com.colosseo.ColosseoApiApplication.main(ColosseoApplication.java:12)

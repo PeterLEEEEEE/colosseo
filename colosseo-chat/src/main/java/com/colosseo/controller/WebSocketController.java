@@ -8,7 +8,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @Controller
+@RequestMapping("/ws")
 @RequiredArgsConstructor
 public class WebSocketController {
 
+
+    public void sendMessage() throws Exception {
+
+    }
 }

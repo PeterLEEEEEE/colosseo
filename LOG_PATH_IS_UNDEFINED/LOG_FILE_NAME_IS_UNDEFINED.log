@@ -20,7 +20,7 @@ ERROR in ch.qos.logback.core.model.processor.PropertyModelHandler - Could not fi
 	at org.springframework.boot.SpringApplication.run(SpringApplication.java:318)
 	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1342)
 	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1331)
-	at com.colosseo.ColosseoApplication.main(ColosseoApplication.java:12)
+	at com.colosseo.ColosseoApiApplication.main(ColosseoApplication.java:12)
 Caused by: java.lang.IllegalStateException: Logback configuration error detected: 
 ERROR in ch.qos.logback.core.model.processor.PropertyModelHandler - Could not find resource [logback-local.properties].
 	at org.springframework.boot.logging.logback.LogbackLoggingSystem.reportConfigurationErrorsIfNecessary(LogbackLoggingSystem.java:277)

@@ -8,10 +8,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableCaching
 @EnableScheduling
 @SpringBootApplication
-public class ColosseoApplication {
-
+public class ColosseoApiApplication {
     public static void main(String[] args) {
-        SpringApplication.run(ColosseoApplication.class, args);
+        SpringApplication.run(ColosseoApiApplication.class, args);
     }
 
 }
