@@ -29,6 +29,7 @@ services:
       - MYSQL_ROOT_PASSWORD=abc123
     volumes:
       - ./database/config:/etc/mysql/conf.d
+    # 컨테이너 외부 : 내부
     ports:
       - '3306:3306'
 
@@ -56,6 +57,42 @@ services:
     ports:
       - '6379:6379'
 
+  colosseo-mongodb:
+    image: mhlee1994/colosseo-mongodb
+    container_name: colosseo-mongodb
+    build:
+      dockerfile: Dockerfile
+      context: ./dockerfiles/mongodb
+    ports:
+      - '27017:27017'
+
+  colosseo-zookeeper:
+    image: mhlee1994/colosseo-zookeeper
+    container_name: colosseo-zookeeper
+    platform: linux/amd64
+    build:
+      dockerfile: Dockerfile
+      context: ./dockerfiles/zookeeper
+    ports:
+      - '2181:2181'
+
+  colosseo-kafka:
+    image: mhlee1994/colosseo-kafka
+    container_name: colosseo-kafka
+    build:
+      dockerfile: Dockerfile
+      context: ./dockerfiles/kafka
+    ports:
+      - '9092:9092'
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: localhost
+      KAFKA_CREATE_TOPICS: "Topic:1:1"
+      KAFKA_ZOOKEEPER_CONNECT: colosseo-zookeeper:2181
+    volumes:
+      - /var/run/docker.sock
+    depends_on:
+      - colosseo-zookeeper
+
   colosseo-prometheus:
     image: mhlee1994/colosseo-prometheus
     container_name: colosseo-prometheus
@@ -80,3 +117,42 @@ services:
       - '3000:3000'
     links:
       - colosseo-prometheus
+
+  controller:
+    image: mhlee1994/colosseo-ngrinder-controller
+    container_name: colosseo-ngrinder-controller
+    platform: linux/amd64
+    build:
+      dockerfile: Dockerfile
+      context: ./dockerfiles/nGrinder/controller
+    ports:
+      - "7070:80"
+      - "16001:16001"
+      - "12000-12009:12000-12009"
+    volumes:
+      - /tmp/ngrinder-controller:/opt/ngrinder-controller
+    restart: always
+
+  agent:
+    image: mhlee1994/colosseo-ngrinder-agent
+    container_name: colosseo-ngrinder-agent
+#    command: ["localhost:7070"]
+    platform: linux/amd64
+    build:
+      dockerfile: Dockerfile
+      context: ./dockerfiles/nGrinder/agent
+    sysctls:
+      - net.core.somaxconn=65000
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nproc:
+        soft: 1024000
+        hard: 1024000
+      nofile:
+        soft: 1024000
+        hard: 1024000
+    restart: always
+    links:
+      - controller

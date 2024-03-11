@@ -9,7 +9,8 @@ git pull origin main
 
 echo "Stopping Containers..."
 echo "Removing Images..."
-docker-compose down --rmi all
+docker-compose -f docker-compose-local.yml down --volumes --rmi all
+docker builder prune
 
 echo "Setup New Containers..."
 docker-compose -f docker-compose-local.yml up -d
